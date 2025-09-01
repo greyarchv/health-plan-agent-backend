@@ -90,36 +90,89 @@ async def health_check():
 
 # Plan generation endpoint
 @app.post("/api/v1/plans/generate")
-async def generate_health_plan(request: HealthPlanRequest):
+async def generate_health_plan(request: dict):
     """Generate a new health plan using the health-plan-agent system"""
     try:
-        print(f"🚀 Plan generation request received for {request.population}")
-        print(f"📋 Goals: {request.goals}")
-        print(f"⚠️ Constraints: {request.constraints}")
-        print(f"⏱️ Timeline: {request.timeline}")
-        print(f"💪 Fitness Level: {request.fitness_level}")
+        print(f"🚀 Plan generation request received")
+        print(f"📝 Request data: {request}")
         
-        if not app.state.orchestrator:
-            print("❌ Orchestrator not available")
-            raise HTTPException(status_code=503, detail="Orchestrator not available")
-        
-        print("✅ Orchestrator available, starting plan generation...")
-        orchestrator = app.state.orchestrator
-        
-        # Generate the health plan
-        print("🎼 Calling orchestrator.generate_health_plan...")
-        health_plan = await orchestrator.generate_health_plan(request)
-        
-        print(f"✅ Plan generated successfully with keys: {list(health_plan.keys()) if health_plan else 'None'}")
-        
-        return {
-            "success": True,
-            "message": "Health plan generated successfully",
-            "data": {
-                "plan_id": list(health_plan.keys())[0] if health_plan else "unknown",
-                "plan": health_plan
+        # Check if this is a prompt-based request
+        if "prompt" in request:
+            print(f"🎯 Natural language prompt received: {request['prompt'][:100]}...")
+            
+            if not app.state.orchestrator:
+                print("❌ Orchestrator not available")
+                raise HTTPException(status_code=503, detail="Orchestrator not available")
+            
+            print("✅ Orchestrator available, starting prompt-based plan generation...")
+            orchestrator = app.state.orchestrator
+            
+            # Create a simplified request object from the prompt
+            # The orchestrator will use AI to extract the necessary parameters
+            simplified_request = type('Request', (), {
+                'population': 'extracted_from_prompt',
+                'goals': ['extracted_from_prompt'],
+                'constraints': ['extracted_from_prompt'],
+                'timeline': 'extracted_from_prompt',
+                'fitness_level': 'extracted_from_prompt',
+                'preferences': [],
+                'prompt': request['prompt']
+            })()
+            
+            # Generate the health plan using the prompt
+            print("🎼 Calling orchestrator.generate_health_plan with prompt...")
+            health_plan = await orchestrator.generate_health_plan(simplified_request)
+            
+            print(f"✅ Plan generated successfully with keys: {list(health_plan.keys()) if health_plan else 'None'}")
+            
+            return {
+                "success": True,
+                "message": "Health plan generated successfully from prompt",
+                "data": {
+                    "plan_id": list(health_plan.keys())[0] if health_plan else "unknown",
+                    "plan": health_plan
+                }
             }
-        }
+        else:
+            # Handle the old structured request format for backward compatibility
+            print(f"📋 Structured request received for {request.get('population', 'unknown')}")
+            print(f"📋 Goals: {request.get('goals', [])}")
+            print(f"⚠️ Constraints: {request.get('constraints', [])}")
+            print(f"⏱️ Timeline: {request.get('timeline', 'unknown')}")
+            print(f"💪 Fitness Level: {request.get('fitness_level', 'unknown')}")
+            
+            if not app.state.orchestrator:
+                print("❌ Orchestrator not available")
+                raise HTTPException(status_code=503, detail="Orchestrator not available")
+            
+            print("✅ Orchestrator available, starting structured plan generation...")
+            orchestrator = app.state.orchestrator
+            
+            # Convert dict to proper request object
+            structured_request = type('Request', (), {
+                'population': request.get('population', 'general'),
+                'goals': request.get('goals', []),
+                'constraints': request.get('constraints', []),
+                'timeline': request.get('timeline', '12_weeks'),
+                'fitness_level': request.get('fitness_level', 'beginner'),
+                'preferences': request.get('preferences', [])
+            })()
+            
+            # Generate the health plan
+            print("🎼 Calling orchestrator.generate_health_plan...")
+            health_plan = await orchestrator.generate_health_plan(structured_request)
+            
+            print(f"✅ Plan generated successfully with keys: {list(health_plan.keys()) if health_plan else 'None'}")
+            
+            return {
+                "success": True,
+                "message": "Health plan generated successfully",
+                "data": {
+                    "plan_id": list(health_plan.keys())[0] if health_plan else "unknown",
+                    "plan": health_plan
+                }
+            }
+            
     except Exception as e:
         print(f"❌ Error in plan generation: {str(e)}")
         import traceback

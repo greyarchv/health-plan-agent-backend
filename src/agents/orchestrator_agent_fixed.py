@@ -35,28 +35,59 @@ class OrchestratorAgentFixed(BaseAgent):
     async def generate_health_plan(self, request) -> Dict[str, Any]:
         """Generate a comprehensive health plan using all agents."""
         
-        print(f"🎯 Starting health plan generation for {request.population}")
-        print(f"📋 Goals: {request.goals}")
-        print(f"⚠️  Constraints: {request.constraints}")
+        # Check if this is a simple prompt request
+        if hasattr(request, 'prompt') and request.prompt:
+            print(f"🎯 Simple prompt received: {request.prompt}")
+            print("🧠 Using LLM to enhance prompt and extract parameters...")
+            
+            # Use LLM to enhance the simple prompt
+            enhanced_prompt = await self._enhance_user_prompt(request.prompt)
+            print(f"✨ Enhanced prompt: {enhanced_prompt}")
+            
+            # Extract parameters from the enhanced prompt
+            extracted_params = await self._extract_parameters_from_prompt(enhanced_prompt)
+            print(f"📋 Extracted parameters: {extracted_params}")
+            
+            # Use extracted parameters for the rest of the process
+            population = extracted_params.get('population', 'general')
+            goals = extracted_params.get('goals', ['general_fitness'])
+            constraints = extracted_params.get('constraints', [])
+            timeline = extracted_params.get('timeline', '12_weeks')
+            fitness_level = extracted_params.get('fitness_level', 'beginner')
+            preferences = extracted_params.get('preferences', [])
+        else:
+            # Use the structured request as before
+            population = request.population
+            goals = request.goals
+            constraints = request.constraints
+            timeline = request.timeline
+            fitness_level = request.fitness_level
+            preferences = request.preferences
+        
+        print(f"🎯 Starting health plan generation for {population}")
+        print(f"📋 Goals: {goals}")
+        print(f"⚠️  Constraints: {constraints}")
+        print(f"⏱️ Timeline: {timeline}")
+        print(f"💪 Fitness Level: {fitness_level}")
         
         # Phase 1: Research
         print("\n🔬 Phase 1: Research")
         research_findings = await self.research_agent.process(
-            population=request.population,
-            goals=list(request.goals),
-            constraints=request.constraints
+            population=population,
+            goals=list(goals),
+            constraints=constraints
         )
         print("✅ Research phase completed")
         
         # Phase 2: Fitness Planning
         print("\n💪 Phase 2: Fitness Planning")
-        print(f"💪 Calling fitness agent with goals: {request.goals}")
+        print(f"💪 Calling fitness agent with goals: {goals}")
         fitness_plan = await self.fitness_agent.process(
             research_findings=research_findings,
-            goals=list(request.goals),
-            constraints=request.constraints,
-            timeline=request.timeline,
-            fitness_level=request.fitness_level
+            goals=list(goals),
+            constraints=constraints,
+            timeline=timeline,
+            fitness_level=fitness_level
         )
         print(f"💪 Fitness plan keys: {list(fitness_plan.keys())}")
         print("✅ Fitness planning completed")
@@ -65,19 +96,19 @@ class OrchestratorAgentFixed(BaseAgent):
         print("\n🥗 Phase 3: Nutrition Planning")
         nutrition_plan = await self.nutrition_agent.process(
             fitness_plan=fitness_plan,
-            goals=list(request.goals),
-            constraints=request.constraints,
-            preferences=request.preferences
+            goals=list(goals),
+            constraints=constraints,
+            preferences=preferences
         )
         print("✅ Nutrition planning completed")
         
         # Phase 4: Motivation Planning
         print("\n🎯 Phase 4: Motivation Planning")
         motivation_plan = await self.motivation_agent.process(
-            goals=list(request.goals),
-            timeline=request.timeline,
-            fitness_level=request.fitness_level,
-            constraints=request.constraints
+            goals=list(goals),
+            timeline=timeline,
+            fitness_level=fitness_level,
+            constraints=constraints
         )
         print("✅ Motivation planning completed")
         
@@ -87,7 +118,7 @@ class OrchestratorAgentFixed(BaseAgent):
             fitness_plan=fitness_plan,
             nutrition_plan=nutrition_plan,
             motivation_plan=motivation_plan,
-            constraints=request.constraints,
+            constraints=constraints,
             research_findings=research_findings
         )
         print("✅ Safety validation completed")
@@ -109,6 +140,116 @@ class OrchestratorAgentFixed(BaseAgent):
         print(f"📈 Validation Score: {safety_report.get('validation_score', 0)}/100")
         
         return final_plan
+    
+    async def _enhance_user_prompt(self, user_prompt: str) -> str:
+        """Use LLM to enhance a simple user prompt into a comprehensive health plan request."""
+        try:
+            enhancement_prompt = f"""
+You are an expert health and fitness consultant. A user has provided a simple request for a health plan:
+
+USER REQUEST: "{user_prompt}"
+
+Your task is to enhance this into a comprehensive, detailed health plan specification that covers:
+
+1. POPULATION: Who this plan is for (e.g., postpartum_mothers, senior_fitness, athletes, etc.)
+2. GOALS: Specific fitness and health objectives
+3. CONSTRAINTS: Any limitations, injuries, or considerations
+4. TIMELINE: How long the plan should run (e.g., 8_weeks, 12_weeks, 16_weeks)
+5. FITNESS_LEVEL: Beginner, intermediate, or advanced
+6. PREFERENCES: Any specific preferences or requirements
+
+Make the enhanced prompt comprehensive, specific, and actionable. Focus on what would make this the BEST possible plan for the user's needs.
+
+ENHANCED PROMPT:
+"""
+            
+            response = await asyncio.to_thread(
+                self.client.chat.completions.create,
+                model="gpt-4",
+                messages=[{"role": "user", "content": enhancement_prompt}],
+                max_tokens=500,
+                temperature=0.7
+            )
+            
+            enhanced_prompt = response.choices[0].message.content.strip()
+            print(f"🧠 LLM enhanced prompt: {enhanced_prompt}")
+            return enhanced_prompt
+            
+        except Exception as e:
+            print(f"❌ Error enhancing prompt: {e}")
+            # Fallback to a basic enhancement
+            return f"Create a comprehensive health plan for: {user_prompt}. Focus on evidence-based approaches, safety, and results."
+    
+    async def _extract_parameters_from_prompt(self, enhanced_prompt: str) -> Dict[str, Any]:
+        """Use LLM to extract structured parameters from the enhanced prompt."""
+        try:
+            extraction_prompt = f"""
+You are an expert at analyzing health plan requests and extracting key parameters.
+
+ENHANCED PROMPT: "{enhanced_prompt}"
+
+Extract the following parameters and return them as a JSON object:
+
+{{
+    "population": "specific population group (e.g., postpartum_mothers, senior_fitness, athletes)",
+    "goals": ["goal1", "goal2", "goal3"],
+    "constraints": ["constraint1", "constraint2"],
+    "timeline": "8_weeks, 12_weeks, or 16_weeks",
+    "fitness_level": "beginner, intermediate, or advanced",
+    "preferences": ["preference1", "preference2"]
+}}
+
+If any parameter is not clearly specified, make a reasonable assumption based on the context.
+Return ONLY the JSON object, no other text.
+"""
+            
+            response = await asyncio.to_thread(
+                self.client.chat.completions.create,
+                model="gpt-4",
+                messages=[{"role": "user", "content": extraction_prompt}],
+                max_tokens=300,
+                temperature=0.3
+            )
+            
+            extracted_text = response.choices[0].message.content.strip()
+            
+            # Try to parse JSON from the response
+            try:
+                import json
+                # Remove any markdown formatting
+                if extracted_text.startswith('```json'):
+                    extracted_text = extracted_text[7:-3]
+                elif extracted_text.startswith('```'):
+                    extracted_text = extracted_text[3:-3]
+                
+                extracted_params = json.loads(extracted_text)
+                print(f"📋 Extracted parameters: {extracted_params}")
+                return extracted_params
+                
+            except json.JSONDecodeError as e:
+                print(f"❌ JSON parsing error: {e}")
+                print(f"❌ Raw response: {extracted_text}")
+                # Fallback to default parameters
+                return {
+                    "population": "general",
+                    "goals": ["general_fitness"],
+                    "constraints": [],
+                    "timeline": "12_weeks",
+                    "fitness_level": "beginner",
+                    "preferences": []
+                }
+                
+        except Exception as e:
+            print(f"❌ Error extracting parameters: {e}")
+            # Fallback to default parameters
+            return {
+                "population": "general",
+                "goals": ["general_fitness"],
+                "constraints": [],
+                "timeline": "12_weeks",
+                "fitness_level": "beginner",
+                "preferences": []
+            }
     
     async def _integrate_plan(self, request, research_findings: Dict[str, Any],
                             fitness_plan: Dict[str, Any], nutrition_plan: Dict[str, Any],

@@ -37,45 +37,33 @@
     
     <!-- Generate New Plan -->
     <div class="section">
-        <h2>Generate New Plan</h2>
+        <h2>🎯 Generate Health Plan</h2>
+        <p><em>Describe the health plan you want to create in natural language. Our AI agents will work together to design the perfect plan for you.</em></p>
+        
         <form id="generateForm">
-            <label>Population:</label>
-            <input type="text" id="population" placeholder="e.g., postpartum_mothers, senior_fitness" required>
+            <label for="planPrompt"><strong>🎯 What kind of health plan do you want?</strong></label>
+            <input 
+                type="text" 
+                id="planPrompt" 
+                placeholder="e.g., 'The best plan ever for building muscle quickly - high intensity' or 'Postpartum recovery plan for new moms'"
+                required
+                style="font-size: 16px; padding: 12px;"
+            />
             
-            <label>Goals (comma-separated):</label>
-            <input type="text" id="goals" placeholder="e.g., core_restoration, pelvic_floor_recovery" required>
-            
-            <label>Constraints (comma-separated):</label>
-            <input type="text" id="constraints" placeholder="e.g., diastasis_recti, arthritis">
-            
-            <label>Timeline:</label>
-            <select id="timeline">
-                <option value="8_weeks">8 weeks</option>
-                <option value="12_weeks" selected>12 weeks</option>
-                <option value="16_weeks">16 weeks</option>
-            </select>
-            
-            <label>Fitness Level:</label>
-            <select id="fitnessLevel">
-                <option value="beginner" selected>Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-            </select>
-            
-            <button type="submit">Generate Plan</button>
+            <button type="submit">🚀 Generate Plan with AI Agents</button>
         </form>
         
         <!-- Progress and Logging Section -->
         <div id="progressSection" style="display: none;">
-            <h3>Plan Generation Progress</h3>
+            <h3>🤖 AI Agent Progress</h3>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
-            <div id="progressText">Initializing...</div>
+            <div id="progressText">Initializing AI agents...</div>
             
-            <h4>Agent Activity Log</h4>
+            <h4>🧠 Agent Activity Log</h4>
             <div class="log-container" id="logContainer">
-                <div class="log-entry log-info">Ready to generate plan...</div>
+                <div class="log-entry log-info">🤖 AI agents are preparing to work...</div>
             </div>
         </div>
         
@@ -131,37 +119,31 @@
             
             // Show progress section and reset
             showProgressSection();
-            updateProgress(0, 'Initializing...');
+            updateProgress(0, 'Initializing AI agents...');
             
             const resultDiv = document.getElementById('generateResult');
             resultDiv.innerHTML = '';
             
             try {
-                const payload = {
-                    population: document.getElementById('population').value,
-                    goals: document.getElementById('goals').value.split(',').map(g => g.trim()),
-                    constraints: document.getElementById('constraints').value.split(',').map(c => c.trim()).filter(c => c),
-                    timeline: document.getElementById('timeline').value,
-                    fitness_level: document.getElementById('fitnessLevel').value
-                };
+                const planPrompt = document.getElementById('planPrompt').value;
                 
-                addLogEntry(`🎯 Starting plan generation for: ${payload.population}`, 'phase');
-                addLogEntry(`📋 Goals: ${payload.goals.join(', ')}`, 'info');
-                addLogEntry(`⚠️ Constraints: ${payload.constraints.join(', ')}`, 'info');
-                addLogEntry(`⏱️ Timeline: ${payload.timeline}`, 'info');
-                addLogEntry(`💪 Fitness Level: ${payload.fitness_level}`, 'info');
+                addLogEntry(`🎯 Natural language prompt received:`, 'phase');
+                addLogEntry(`📝 "${planPrompt.substring(0, 100)}${planPrompt.length > 100 ? '...' : ''}"`, 'info');
                 
-                updateProgress(10, 'Preparing request...');
+                updateProgress(10, 'Analyzing prompt...');
+                addLogEntry(`🧠 AI agents analyzing your request...`, 'agent');
                 
-                addLogEntry(`🚀 Sending request to orchestrator agent...`, 'agent');
-                
+                // Send the natural language prompt to the backend
                 const response = await fetch(`${API_BASE}/api/v1/plans/generate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        prompt: planPrompt
+                    })
                 });
                 
-                updateProgress(50, 'Processing response...');
+                updateProgress(50, 'AI agents working...');
+                addLogEntry(`🤖 AI agents are collaborating to create your plan...`, 'agent');
                 
                 const result = await response.json();
                 
@@ -173,10 +155,10 @@
                     // Show plan details
                     resultDiv.innerHTML = `
                         <div class="success">
-                            <h3>✅ Plan Generated Successfully!</h3>
+                            <h3>✅ AI-Generated Health Plan Ready!</h3>
                             <p><strong>Plan ID:</strong> ${result.data.plan_id}</p>
                             <p><strong>Overview:</strong> ${result.data.plan[result.data.plan_id].overview.substring(0, 200)}...</p>
-                            <button onclick="viewFullPlan('${result.data.plan_id}')">View Full Plan</button>
+                            <button onclick="viewFullPlan('${result.data.plan_id}')">📋 View Full Plan</button>
                         </div>
                     `;
                     
