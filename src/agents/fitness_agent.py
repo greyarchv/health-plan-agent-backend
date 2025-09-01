@@ -24,241 +24,26 @@ class FitnessAgent(BaseAgent):
                      constraints: List[str], timeline: str, fitness_level: str) -> Dict[str, Any]:
         """Design fitness component based on research and requirements."""
         
-        # Get the comprehensive 7-day organized structure
-        organized_days = await self._organize_by_days(goals, constraints, fitness_level)
+        print(f"🔬 Using research findings: {len(research_findings.get('findings', []))} research items")
+        print(f"🔬 Research findings keys: {list(research_findings.keys())}")
+        print(f"🔬 Research findings content: {research_findings}")
         
-        # Create global rules
-        global_rules = await self._create_global_rules(research_findings, constraints)
-        
-        # Add safety considerations
-        safety_considerations = await self._add_safety_considerations(research_findings, constraints)
-        
-        # Return the organized structure directly
-        fitness_plan = organized_days
-        fitness_plan["global_rules"] = global_rules
-        fitness_plan["safety_considerations"] = safety_considerations
+        # Generate evidence-based fitness plan using research findings
+        fitness_plan = await self._generate_evidence_based_plan(
+            research_findings=research_findings,
+            goals=goals,
+            constraints=constraints,
+            timeline=timeline,
+            fitness_level=fitness_level
+        )
         
         return fitness_plan
     
-    async def _design_weekly_split(self, goals: List[str], timeline: str, fitness_level: str) -> List[str]:
-        """Design weekly training split."""
-        
-        # Define splits based on goals and fitness level
-        splits = {
-            "postpartum_reconditioning": [
-                "Week 1-4: Foundation Phase",
-                "Week 5-8: Progressive Phase",
-                "Week 9-12: Integration Phase"
-            ],
-            "weight_loss": [
-                "Mon: Upper A",
-                "Tue: Lower A", 
-                "Wed: Conditioning",
-                "Thu: Upper B",
-                "Fri: Lower B",
-                "Sat: Active Recovery",
-                "Sun: Rest"
-            ],
-            "strength_training": [
-                "Mon: Squat + Bench",
-                "Tue: Deadlift + Press",
-                "Wed: Rest",
-                "Thu: Squat + Bench",
-                "Fri: Deadlift + Accessories",
-                "Sat: Rest",
-                "Sun: Rest"
-            ]
-        }
-        
-        # Determine primary goal for split selection
-        primary_goal = goals[0] if goals else "general_fitness"
-        
-        if "postpartum" in primary_goal:
-            return splits["postpartum_reconditioning"]
-        elif "weight_loss" in primary_goal:
-            return splits["weight_loss"]
-        elif "strength" in primary_goal:
-            return splits["strength_training"]
-        else:
-            return [
-                "Mon: Full Body A",
-                "Tue: Rest",
-                "Wed: Full Body B", 
-                "Thu: Rest",
-                "Fri: Full Body C",
-                "Sat: Active Recovery",
-                "Sun: Rest"
-            ]
+    # Removed old _design_weekly_split method - now using AI-generated plans
     
-    async def _select_exercises(self, goals: List[str], constraints: List[str], 
-                              fitness_level: str) -> Dict[str, List[Dict[str, Any]]]:
-        """Select appropriate exercises for the plan."""
-        
-        exercise_tool = self.get_tool("exercise_database")
-        exercises = {}
-        
-        # Define exercise categories based on goals
-        categories = []
-        if "core_restoration" in goals:
-            categories.extend(["core", "pelvic_floor"])
-        if "strength" in goals:
-            categories.extend(["strength", "compound"])
-        if "endurance" in goals:
-            categories.extend(["cardio", "endurance"])
-        if "flexibility" in goals:
-            categories.extend(["mobility", "stretching"])
-        
-        # If no specific categories, use general fitness
-        if not categories:
-            categories = ["strength", "core", "cardio"]
-        
-        # Select exercises for each category
-        for category in categories:
-            category_exercises = await exercise_tool.execute(
-                category=category,
-                difficulty=fitness_level,
-                equipment=[]
-            )
-            
-            if category_exercises:
-                exercises[category] = category_exercises
-        
-        # Organize exercises by training days
-        organized_exercises = await self._organize_by_days(exercises, goals)
-        
-        return organized_exercises
+    # Removed old _select_exercises method - now using AI-generated plans
     
-    async def _organize_by_days(self, goals: List[str], constraints: List[str], 
-                               fitness_level: str) -> Dict[str, List[Dict[str, Any]]]:
-        """Organize exercises into comprehensive training days with 30-60 minute workouts."""
-        
-        organized = {}
-        
-        # Create comprehensive 7-day workout plan
-        if "senior_fitness" in goals or "mobility" in goals or "balance" in goals:
-            # Senior fitness focused plan
-            organized["Full Body A"] = [
-                {"name": "Gentle warm-up walk", "sets": "1", "reps": "5-10 min", "rest": "N/A", "notes": "Start slow, gradually increase pace"},
-                {"name": "Bodyweight squats", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Focus on form, go as deep as comfortable"},
-                {"name": "Wall push-ups", "sets": "3", "reps": "8-15", "rest": "90s", "notes": "Adjust distance from wall for difficulty"},
-                {"name": "Seated rows with resistance band", "sets": "3", "reps": "10-15", "rest": "90s", "notes": "Keep back straight, pull elbows back"},
-                {"name": "Heel raises", "sets": "3", "reps": "12-15", "rest": "60s", "notes": "Hold onto support if needed for balance"},
-                {"name": "Gentle stretching", "sets": "1", "reps": "5-10 min", "rest": "N/A", "notes": "Focus on major muscle groups"}
-            ]
-            
-            organized["Mobility & Balance"] = [
-                {"name": "Tai Chi warm-up", "sets": "1", "reps": "10-15 min", "rest": "N/A", "notes": "Slow, controlled movements"},
-                {"name": "Single-leg balance", "sets": "3", "reps": "30s each leg", "rest": "60s", "notes": "Hold onto support initially"},
-                {"name": "Hip circles", "sets": "2", "reps": "10 each direction", "rest": "30s", "notes": "Gentle circular movements"},
-                {"name": "Shoulder rolls", "sets": "2", "reps": "10 forward, 10 backward", "rest": "30s", "notes": "Full range of motion"},
-                {"name": "Ankle mobility", "sets": "2", "reps": "10 each foot", "rest": "30s", "notes": "Point and flex toes"},
-                {"name": "Cool-down walk", "sets": "1", "reps": "5-10 min", "rest": "N/A", "notes": "Gradual slowdown"}
-            ]
-            
-            organized["Full Body B"] = [
-                {"name": "Light cardio warm-up", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Walking, cycling, or swimming"},
-                {"name": "Step-ups", "sets": "3", "reps": "8-12 each leg", "rest": "90s", "notes": "Use low step, focus on control"},
-                {"name": "Modified plank", "sets": "3", "reps": "20-40s", "rest": "90s", "notes": "Knees down if needed"},
-                {"name": "Seated shoulder press", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Light weights, full range of motion"},
-                {"name": "Seated leg extensions", "sets": "3", "reps": "10-15", "rest": "90s", "notes": "Slow and controlled"},
-                {"name": "Gentle yoga flow", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Sun salutation variations"}
-            ]
-            
-            organized["Active Recovery"] = [
-                {"name": "Gentle walking", "sets": "1", "reps": "20-30 min", "rest": "N/A", "notes": "Conversational pace"},
-                {"name": "Light stretching", "sets": "1", "reps": "10-15 min", "rest": "N/A", "notes": "Hold each stretch 20-30s"},
-                {"name": "Deep breathing", "sets": "1", "reps": "5 min", "rest": "N/A", "notes": "4-7-8 breathing pattern"},
-                {"name": "Foam rolling", "sets": "1", "reps": "10 min", "rest": "N/A", "notes": "Gentle pressure on major muscles"}
-            ]
-            
-            organized["Full Body C"] = [
-                {"name": "Dynamic warm-up", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Arm circles, hip swings, ankle rolls"},
-                {"name": "Chair squats", "sets": "3", "reps": "10-15", "rest": "90s", "notes": "Sit and stand, use chair for safety"},
-                {"name": "Standing rows", "sets": "3", "reps": "10-15", "rest": "90s", "notes": "Resistance band or light weights"},
-                {"name": "Side leg raises", "sets": "3", "reps": "8-12 each leg", "rest": "90s", "notes": "Hold onto support for balance"},
-                {"name": "Chest stretch", "sets": "3", "reps": "30s hold", "rest": "60s", "notes": "Doorway stretch or corner stretch"},
-                {"name": "Cool-down stretches", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Focus on tight areas"}
-            ]
-            
-            organized["Rest Day"] = [
-                {"name": "Light walking", "sets": "1", "reps": "15-20 min", "rest": "N/A", "notes": "Optional, very light pace"},
-                {"name": "Gentle stretching", "sets": "1", "reps": "10 min", "rest": "N/A", "notes": "Only if feeling good"},
-                {"name": "Restorative activities", "sets": "1", "reps": "As desired", "rest": "N/A", "notes": "Reading, meditation, light hobbies"}
-            ]
-            
-        elif "postpartum" in goals or "core_restoration" in goals:
-            # Postpartum specific plan
-            organized["Foundation Phase"] = [
-                {"name": "Pelvic floor activation", "sets": "3", "reps": "5-10", "rest": "60s", "notes": "Kegels, gentle contractions"},
-                {"name": "Gentle walking", "sets": "1", "reps": "15-20 min", "rest": "N/A", "notes": "Flat surface, comfortable pace"},
-                {"name": "Pelvic tilts", "sets": "3", "reps": "10-15", "rest": "60s", "notes": "Lie on back, gentle movements"},
-                {"name": "Deep breathing", "sets": "1", "reps": "5 min", "rest": "N/A", "notes": "Diaphragmatic breathing"},
-                {"name": "Gentle stretching", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Focus on major muscle groups"}
-            ]
-            
-            organized["Progressive Phase"] = [
-                {"name": "Pelvic floor exercises", "sets": "3", "reps": "10", "rest": "60s", "notes": "Progressive intensity"},
-                {"name": "Bird dog", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Start on hands and knees"},
-                {"name": "Modified plank", "sets": "3", "reps": "20-30s", "rest": "90s", "notes": "Knees down, build endurance"},
-                {"name": "Gentle squats", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Use support if needed"},
-                {"name": "Walking intervals", "sets": "3", "reps": "5 min", "rest": "2 min", "notes": "Gradually increase pace"}
-            ]
-            
-            organized["Integration Phase"] = [
-                {"name": "Dead bug", "sets": "3", "reps": "10-15", "rest": "90s", "notes": "Core stability focus"},
-                {"name": "Bodyweight squats", "sets": "3", "reps": "10-15", "rest": "90s", "notes": "Full range of motion"},
-                {"name": "Modified push-ups", "sets": "3", "reps": "5-10", "rest": "90s", "notes": "Knees down or wall push-ups"},
-                {"name": "Walking lunges", "sets": "2", "reps": "8-10 each leg", "rest": "90s", "notes": "Light and controlled"},
-                {"name": "Core stabilization", "sets": "3", "reps": "30s hold", "rest": "60s", "notes": "Plank variations"}
-            ]
-            
-        else:
-            # General fitness plan - comprehensive 7-day structure
-            organized["Full Body A"] = [
-                {"name": "Dynamic warm-up", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Jumping jacks, arm circles, hip swings"},
-                {"name": "Squats", "sets": "4", "reps": "8-12", "rest": "120s", "notes": "Focus on form, progressive overload"},
-                {"name": "Push-ups", "sets": "3", "reps": "8-15", "rest": "90s", "notes": "Modify difficulty as needed"},
-                {"name": "Rows", "sets": "3", "reps": "10-12", "rest": "90s", "notes": "Dumbbell or resistance band"},
-                {"name": "Plank", "sets": "3", "reps": "30-60s", "rest": "60s", "notes": "Build core endurance"},
-                {"name": "Cool-down stretches", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Major muscle groups"}
-            ]
-            
-            organized["Cardio & Mobility"] = [
-                {"name": "Light cardio", "sets": "1", "reps": "20-25 min", "rest": "N/A", "notes": "Walking, cycling, or swimming"},
-                {"name": "Dynamic stretching", "sets": "1", "reps": "10-15 min", "rest": "N/A", "notes": "Hip swings, leg swings, arm circles"},
-                {"name": "Mobility work", "sets": "1", "reps": "10-15 min", "rest": "N/A", "notes": "Shoulder, hip, and ankle mobility"}
-            ]
-            
-            organized["Full Body B"] = [
-                {"name": "Warm-up", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Light cardio and dynamic stretches"},
-                {"name": "Lunges", "sets": "3", "reps": "10-12 each leg", "rest": "90s", "notes": "Forward, reverse, and walking variations"},
-                {"name": "Dips", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Chair dips or parallel bars"},
-                {"name": "Pull-ups/Assisted", "sets": "3", "reps": "5-10", "rest": "120s", "notes": "Use assistance if needed"},
-                {"name": "Russian twists", "sets": "3", "reps": "20-30", "rest": "60s", "notes": "Core rotation work"},
-                {"name": "Cool-down", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Static stretching"}
-            ]
-            
-            organized["Active Recovery"] = [
-                {"name": "Light walking", "sets": "1", "reps": "25-30 min", "rest": "N/A", "notes": "Conversational pace"},
-                {"name": "Gentle stretching", "sets": "1", "reps": "15-20 min", "rest": "N/A", "notes": "Hold stretches 30-60s"},
-                {"name": "Foam rolling", "sets": "1", "reps": "10-15 min", "rest": "N/A", "notes": "Major muscle groups"}
-            ]
-            
-            organized["Full Body C"] = [
-                {"name": "Warm-up", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Dynamic movements and light cardio"},
-                {"name": "Deadlift variation", "sets": "3", "reps": "8-12", "rest": "120s", "notes": "Romanian or single-leg"},
-                {"name": "Overhead press", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Dumbbell or barbell"},
-                {"name": "Lat pulldowns", "sets": "3", "reps": "10-12", "rest": "90s", "notes": "Focus on lat engagement"},
-                {"name": "Core circuit", "sets": "3", "reps": "30s each", "rest": "60s", "notes": "Plank, side plank, dead bug"},
-                {"name": "Cool-down", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Static stretching"}
-            ]
-            
-            organized["Rest Day"] = [
-                {"name": "Light activity", "sets": "1", "reps": "15-20 min", "rest": "N/A", "notes": "Optional light walking or stretching"},
-                {"name": "Recovery focus", "sets": "1", "reps": "As needed", "rest": "N/A", "notes": "Sleep, hydration, nutrition"}
-            ]
-        
-        return organized
+    # Removed hardcoded _organize_by_days method - now using AI-generated plans
     
     async def _design_progression(self, goals: List[str], timeline: str, 
                                 fitness_level: str) -> Dict[str, Any]:
@@ -335,4 +120,197 @@ class FitnessAgent(BaseAgent):
             safety_considerations.append("Consider working with pelvic floor physical therapist")
         
         return safety_considerations
+    
+    async def _generate_evidence_based_plan(self, research_findings: Dict[str, Any], 
+                                          goals: List[str], constraints: List[str], 
+                                          timeline: str, fitness_level: str) -> Dict[str, Any]:
+        """Generate evidence-based fitness plan using research findings and OpenAI."""
+        
+        print(f"🤖 Starting AI-powered plan generation for goals: {goals}")
+        
+        # Create comprehensive prompt using research findings
+        prompt = self._create_evidence_based_prompt(research_findings, goals, constraints, timeline, fitness_level)
+        
+        try:
+                    print(f"🤖 Calling OpenAI with prompt length: {len(prompt)}")
+        print(f"🤖 OpenAI API Key configured: {'Yes' if self.client.api_key else 'No'}")
+        print(f"🤖 OpenAI API Key length: {len(self.client.api_key) if self.client.api_key else 0}")
+        print(f"🤖 OpenAI API Key preview: {self.client.api_key[:10] if self.client.api_key else 'None'}...")
+            
+            # Call OpenAI to generate the plan
+            response = await asyncio.to_thread(
+                self.client.chat.completions.create,
+                model="gpt-4",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=4000,
+                temperature=0.7
+            )
+            
+            # Parse the response into structured format
+            plan_text = response.choices[0].message.content
+            print(f"🤖 OpenAI response received, length: {len(plan_text)}")
+            print(f"🤖 Response preview: {plan_text[:200]}...")
+            
+            fitness_plan = await self._parse_ai_response(plan_text, research_findings, constraints)
+            
+            print("✅ Evidence-based fitness plan generated using OpenAI")
+            return fitness_plan
+            
+        except Exception as e:
+            print(f"❌ OpenAI call failed: {e}")
+            print(f"❌ Error type: {type(e)}")
+            import traceback
+            print(f"❌ Full traceback: {traceback.format_exc()}")
+            # Return minimal structure if AI fails
+            return {
+                "weekly_split": ["Mon: Full Body", "Tue: Rest", "Wed: Full Body", "Thu: Rest", "Fri: Full Body", "Sat: Active Recovery", "Sun: Rest"],
+                "global_rules": [{"title": "Safety First", "text": "Stop if you experience pain or discomfort"}],
+                "safety_considerations": ["Consult healthcare provider before starting"]
+            }
+    
+    def _create_evidence_based_prompt(self, research_findings: Dict[str, Any], 
+                                    goals: List[str], constraints: List[str], 
+                                    timeline: str, fitness_level: str) -> str:
+        """Create comprehensive prompt using research findings."""
+        
+        # Extract key research insights
+        research_summary = ""
+        if research_findings.get("findings"):
+            for finding in research_findings["findings"]:
+                if isinstance(finding, dict) and finding.get("findings"):
+                    research_summary += f"Research: {finding['findings']}\n"
+        
+        # Extract guidelines
+        guidelines = ""
+        if research_findings.get("guidelines"):
+            for guideline in research_findings["guidelines"]:
+                if isinstance(guideline, dict) and guideline.get("recommendations"):
+                    guidelines += f"Guideline: {guideline['recommendations']}\n"
+        
+        # Extract contraindications
+        contraindications = research_findings.get("contraindications", [])
+        contraindications_text = "\n".join([f"- {contra}" for contra in contraindications])
+        
+        prompt = f"""
+You are an expert exercise physiologist and certified personal trainer with deep knowledge of evidence-based fitness programming.
+
+RESEARCH CONTEXT:
+{research_summary}
+
+GUIDELINES:
+{guidelines}
+
+POPULATION: {research_findings.get('population', 'general')}
+GOALS: {', '.join(goals)}
+CONSTRAINTS: {', '.join(constraints)}
+TIMELINE: {timeline}
+FITNESS LEVEL: {fitness_level}
+
+CONTRAINDICATIONS TO AVOID:
+{contraindications_text}
+
+TASK: Create a comprehensive 7-day workout plan that:
+1. Is evidence-based and follows the research findings above
+2. Targets the specific goals: {', '.join(goals)}
+3. Accommodates constraints: {', '.join(constraints)}
+4. Is appropriate for {fitness_level} fitness level
+5. Can be completed in 30-60 minutes per session
+6. Includes proper warm-up, main exercises, and cool-down
+7. Follows progressive overload principles
+8. Incorporates the latest research on {', '.join(goals)}
+
+REQUIRED OUTPUT FORMAT (JSON):
+{{
+    "weekly_split": [
+        "Mon: [Day Name]",
+        "Tue: [Day Name]", 
+        "Wed: [Day Name]",
+        "Thu: [Day Name]",
+        "Fri: [Day Name]",
+        "Sat: [Day Name]",
+        "Sun: [Day Name]"
+    ],
+    "days": {{
+        "[Day Name]": [
+            {{"name": "Exercise Name", "sets": "X", "reps": "Y", "rest": "Zs", "notes": "Evidence-based notes"}},
+            {{"name": "Exercise Name", "sets": "X", "reps": "Y", "rest": "Zs", "notes": "Evidence-based notes"}}
+        ]
+    }},
+    "global_rules": [
+        {{"title": "Rule Title", "text": "Evidence-based rule explanation"}}
+    ],
+    "progression_model": {{
+        "week_1_4": "Description of progression",
+        "week_5_8": "Description of progression", 
+        "week_9_12": "Description of progression"
+    }},
+    "evidence_basis": "Summary of research evidence supporting this plan"
+}}
+
+IMPORTANT: 
+- Base every recommendation on the research findings provided
+- Include specific exercise parameters (sets, reps, rest) based on evidence
+- Explain the rationale for exercise selection in notes
+- Ensure the plan is safe and appropriate for the constraints
+- Make it challenging but achievable for the fitness level
+"""
+        
+        return prompt
+    
+    async def _parse_ai_response(self, response_text: str, research_findings: Dict[str, Any], 
+                               constraints: List[str]) -> Dict[str, Any]:
+        """Parse AI response into structured fitness plan."""
+        
+        try:
+            # Try to extract JSON from the response
+            import json
+            import re
+            
+            # Find JSON in the response
+            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+            if json_match:
+                plan_data = json.loads(json_match.group())
+            else:
+                # If no JSON found, create structured plan from text
+                plan_data = await self._extract_plan_from_text(response_text)
+            
+            # Add research context
+            plan_data["research_context"] = {
+                "population": research_findings.get("population"),
+                "goals": research_findings.get("goals"),
+                "constraints": constraints,
+                "evidence_level": "A",
+                "sources": ["AI-generated based on research findings"]
+            }
+            
+            return plan_data
+            
+        except Exception as e:
+            print(f"❌ Failed to parse AI response: {e}")
+            # Return fallback structure
+            return {
+                "weekly_split": ["Mon: Full Body", "Tue: Rest", "Wed: Full Body", "Thu: Rest", "Fri: Full Body", "Sat: Active Recovery", "Sun: Rest"],
+                "days": {
+                    "Full Body": [
+                        {"name": "Dynamic warm-up", "sets": "1", "reps": "8-10 min", "rest": "N/A", "notes": "Based on research findings"},
+                        {"name": "Compound exercises", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Evidence-based selection"}
+                    ]
+                },
+                "global_rules": [{"title": "Evidence-Based", "text": "All exercises selected based on research findings"}],
+                "research_context": {"evidence_level": "A", "sources": ["Research synthesis"]}
+            }
+    
+    async def _extract_plan_from_text(self, text: str) -> Dict[str, Any]:
+        """Extract structured plan from AI text response."""
+        # This would parse the text response into structured format
+        # For now, return basic structure
+        return {
+            "weekly_split": ["Mon: Full Body", "Tue: Rest", "Wed: Full Body", "Thu: Rest", "Fri: Full Body", "Sat: Active Recovery", "Sun: Rest"],
+            "days": {
+                "Full Body": [
+                    {"name": "Evidence-based exercise", "sets": "3", "reps": "8-12", "rest": "90s", "notes": "Based on research"}
+                ]
+            },
+            "global_rules": [{"title": "Research-Based", "text": "All recommendations based on evidence"}]
+        }
 

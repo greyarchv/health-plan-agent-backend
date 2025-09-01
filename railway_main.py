@@ -126,6 +126,76 @@ async def get_plan(plan_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving plan: {str(e)}")
 
+# Test OpenAI endpoint
+@app.get("/api/v1/test/openai")
+async def test_openai():
+    """Test OpenAI API connectivity."""
+    try:
+        import openai
+        from src.utils.config import Config
+        
+        print(f"🔍 Testing OpenAI API connection...")
+        print(f"🔑 API Key configured: {'Yes' if Config.OPENAI_API_KEY else 'No'}")
+        print(f"🔑 API Key length: {len(Config.OPENAI_API_KEY) if Config.OPENAI_API_KEY else 0}")
+        print(f"🔑 API Key preview: {Config.OPENAI_API_KEY[:10] if Config.OPENAI_API_KEY else 'None'}...")
+        
+        if not Config.OPENAI_API_KEY:
+            return {
+                "success": False,
+                "error": "No OpenAI API key configured",
+                "details": {
+                    "api_key_configured": False,
+                    "api_key_length": 0
+                }
+            }
+        
+        # Initialize OpenAI client
+        client = openai.OpenAI(api_key=Config.OPENAI_API_KEY)
+        
+        # Make a simple test request
+        print("📡 Making test request to OpenAI...")
+        
+        response = await asyncio.to_thread(
+            client.chat.completions.create,
+            model=Config.OPENAI_MODEL,
+            messages=[{"role": "user", "content": "Give me a random word."}],
+            max_tokens=10,
+            temperature=0.7
+        )
+        
+        result = response.choices[0].message.content.strip()
+        print(f"✅ OpenAI API call successful!")
+        print(f"📝 Response: '{result}'")
+        
+        return {
+            "success": True,
+            "message": "OpenAI API is working correctly!",
+            "data": {
+                "random_word": result,
+                "model_used": response.model,
+                "tokens_used": response.usage.total_tokens,
+                "api_key_configured": True,
+                "api_key_length": len(Config.OPENAI_API_KEY),
+                "api_key_preview": Config.OPENAI_API_KEY[:10] + "..."
+            }
+        }
+        
+    except Exception as e:
+        print(f"❌ OpenAI API call failed: {e}")
+        print(f"❌ Error type: {type(e)}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
+        
+        return {
+            "success": False,
+            "error": f"OpenAI API call failed: {str(e)}",
+            "error_type": str(type(e)),
+            "details": {
+                "api_key_configured": bool(Config.OPENAI_API_KEY),
+                "api_key_length": len(Config.OPENAI_API_KEY) if Config.OPENAI_API_KEY else 0
+            }
+        }
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -137,7 +207,8 @@ async def root():
             "health": "/health",
             "generate_plan": "/api/v1/plans/generate",
             "discover_plans": "/api/v1/plans/discover",
-            "get_plan": "/api/v1/plans/{plan_id}"
+            "get_plan": "/api/v1/plans/{plan_id}",
+            "test_openai": "/api/v1/test/openai"
         }
     }
 

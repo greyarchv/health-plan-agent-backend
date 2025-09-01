@@ -50,6 +50,7 @@ class OrchestratorAgentFixed(BaseAgent):
         
         # Phase 2: Fitness Planning
         print("\n💪 Phase 2: Fitness Planning")
+        print(f"💪 Calling fitness agent with goals: {request.goals}")
         fitness_plan = await self.fitness_agent.process(
             research_findings=research_findings,
             goals=list(request.goals),
@@ -57,6 +58,7 @@ class OrchestratorAgentFixed(BaseAgent):
             timeline=request.timeline,
             fitness_level=request.fitness_level
         )
+        print(f"💪 Fitness plan keys: {list(fitness_plan.keys())}")
         print("✅ Fitness planning completed")
         
         # Phase 3: Nutrition Planning
@@ -218,10 +220,31 @@ class OrchestratorAgentFixed(BaseAgent):
         # Debug: Print what we're receiving
         print(f"DEBUG: Fitness plan keys: {list(fitness_plan.keys())}")
         
-        # The fitness agent should return the organized days directly
-        # Check if we have the organized structure
-        if "Full Body A" in fitness_plan or "Foundation Phase" in fitness_plan or "Mobility & Balance" in fitness_plan:
-            # This is the organized structure from fitness agent
+        # Check if we have AI-generated plan with 'days' structure
+        if "days" in fitness_plan:
+            # This is the new AI-generated structure
+            for day, exercises in fitness_plan["days"].items():
+                if isinstance(exercises, list) and exercises:
+                    formatted_exercises = []
+                    for i, exercise in enumerate(exercises, 1):
+                        if isinstance(exercise, dict):
+                            # Convert exercise dict to string format
+                            name = exercise.get("name", "Exercise")
+                            sets = exercise.get("sets", 3)
+                            reps = exercise.get("reps", "8-12")
+                            notes = exercise.get("notes", "")
+                            
+                            # Format: "1) Exercise Name — Sets×Reps"
+                            exercise_text = f"{i}) {name} — {sets}×{reps}"
+                            if notes:
+                                exercise_text += f" ({notes})"
+                            formatted_exercises.append(exercise_text)
+                        else:
+                            formatted_exercises.append(f"{i}) {exercise}")
+                    days[day] = formatted_exercises
+        # Check if we have the old organized structure (backward compatibility)
+        elif "Full Body A" in fitness_plan or "Foundation Phase" in fitness_plan or "Mobility & Balance" in fitness_plan:
+            # This is the old organized structure from fitness agent
             for day, exercises in fitness_plan.items():
                 if isinstance(exercises, list) and exercises:
                     formatted_exercises = []

@@ -53,25 +53,10 @@ class PubMedQueryTool(BaseTool):
         except Exception as e:
             return {
                 "error": f"Research query failed: {str(e)}",
-                "fallback_data": self._get_fallback_data(keywords, population)
+                "findings": f"Unable to retrieve research for {keywords}. Please ensure OpenAI API key is configured correctly."
             }
     
-    def _get_fallback_data(self, keywords: str, population: str) -> Dict[str, Any]:
-        """Provide fallback data when API calls fail."""
-        fallback_data = {
-            "postpartum": {
-                "findings": "Postpartum exercise should begin 6-8 weeks after delivery with medical clearance. Focus on core restoration, pelvic floor recovery, and gradual return to fitness.",
-                "guidelines": ["Start with gentle walking", "Include pelvic floor exercises", "Avoid high-impact activities initially"],
-                "contraindications": ["Unresolved diastasis recti", "Pelvic organ prolapse", "Uncontrolled bleeding"]
-            },
-            "weight_loss": {
-                "findings": "Combination of resistance training and cardiovascular exercise with caloric deficit is most effective for weight loss while preserving muscle mass.",
-                "guidelines": ["3-5 sessions per week", "Progressive overload", "Adequate protein intake"],
-                "contraindications": ["Severe obesity complications", "Uncontrolled hypertension"]
-            }
-        }
-        
-        return fallback_data.get(population, fallback_data.get("general", {}))
+
 
 class GuidelineExtractorTool(BaseTool):
     """Tool for extracting guidelines from healthcare organizations."""
