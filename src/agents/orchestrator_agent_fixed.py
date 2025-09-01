@@ -271,16 +271,16 @@ Return ONLY the JSON object, no other text.
         # Create conditioning and recovery
         conditioning_and_recovery = await self._create_conditioning_recovery(fitness_plan, safety_report)
         
-        # Create nutrition section
-        nutrition = await self._create_nutrition_section(nutrition_plan)
+        # Create nutrition section in EXACT format
+        nutrition = await self._create_nutrition_section_exact(nutrition_plan)
         
         # Create execution checklist
         execution_checklist = await self._create_execution_checklist(
             fitness_plan, nutrition_plan, motivation_plan, safety_report
         )
         
-        # Generate plan ID from population and goals
-        plan_id = await self._generate_plan_id(request)
+        # Generate a descriptive plan ID
+        plan_id = await self._generate_plan_id(request, research_findings)
         
         # Format the final plan in exact frontend-compatible structure
         final_plan = {
@@ -297,11 +297,41 @@ Return ONLY the JSON object, no other text.
         
         return final_plan
     
-    async def _generate_plan_id(self, request) -> str:
-        """Generate a unique plan ID from population and goals."""
-        population_slug = request.population.lower().replace(" ", "_").replace("-", "_")
-        goals_slug = "_".join([goal.lower().replace(" ", "_") for goal in request.goals[:2]])
-        return f"{population_slug}_{goals_slug}"
+    async def _generate_plan_id(self, request, research_findings: Dict[str, Any]) -> str:
+        """Generate a descriptive plan ID that matches the frontend format."""
+        try:
+            # If we have a prompt, use AI to generate a descriptive name
+            if hasattr(request, 'prompt') and request.prompt:
+                plan_name_prompt = f"""
+                Based on this health plan request, generate a short, descriptive plan ID (like "building_muscle", "postpartum_recovery", "senior_fitness"):
+                
+                REQUEST: "{request.prompt}"
+                
+                Return ONLY the plan ID, no other text. Use lowercase with underscores.
+                Examples: building_muscle, postpartum_recovery, senior_fitness, weight_loss, strength_training
+                """
+                
+                response = await asyncio.to_thread(
+                    self.client.chat.completions.create,
+                    model="gpt-4",
+                    messages=[{"role": "user", "content": plan_name_prompt}],
+                    max_tokens=50,
+                    temperature=0.3
+                )
+                
+                plan_id = response.choices[0].message.content.strip().lower().replace(" ", "_")
+                print(f"🧠 AI-generated plan ID: {plan_id}")
+                return plan_id
+            
+            # Fallback to structured request
+            population_slug = request.population.lower().replace(" ", "_").replace("-", "_")
+            goals_slug = "_".join([goal.lower().replace(" ", "_") for goal in request.goals[:2]])
+            return f"{population_slug}_{goals_slug}"
+            
+        except Exception as e:
+            print(f"❌ Error generating plan ID: {e}")
+            # Fallback to a generic name
+            return "custom_health_plan"
     
     async def _create_weekly_split(self, fitness_plan: Dict[str, Any]) -> List[str]:
         """Create weekly split in frontend-compatible format."""
@@ -562,3 +592,95 @@ Return ONLY the JSON object, no other text.
             ])
         
         return checklist
+    
+    async def _create_nutrition_section_exact(self, nutrition_plan: Dict[str, Any]) -> Dict[str, Any]:
+        """Create nutrition section in the EXACT format expected by the frontend."""
+        try:
+            # Extract nutrition data from the nutrition plan
+            goal = nutrition_plan.get('goal', 'Support overall health and fitness goals')
+            calories = nutrition_plan.get('calories', 'Maintenance calories')
+            protein = nutrition_plan.get('protein', '1.6-2.2 g/kg/day')
+            carbohydrate = nutrition_plan.get('carbohydrate', '3-6 g/kg/day')
+            fat = nutrition_plan.get('fat', '0.6-1.0 g/kg/day')
+            
+            # Create timing and training day setup
+            timing_and_training_day_setup = nutrition_plan.get('timing_and_training_day_setup', [
+                "2-3 hours before exercise: Balanced meal with protein and carbohydrates",
+                "30-60 minutes before exercise: Light snack with carbohydrates if needed",
+                "Within 2 hours after exercise: Protein and carbohydrates for recovery",
+                "Eat every 3-4 hours to maintain stable energy levels",
+                "Include protein with each meal to support muscle maintenance"
+            ])
+            
+            # Create supplements section
+            supplements = nutrition_plan.get('supplements', [
+                "Creatine monohydrate: 3-5 g daily, any time",
+                "Whey or casein: to hit protein targets",
+                "Vitamin D3: 1000-2000 IU/day if intake or sun is low",
+                "Fish oil: target 1-2 g EPA+DHA/day if intake is low"
+            ])
+            
+            # Create hydration and electrolytes section
+            hydration_and_electrolytes = nutrition_plan.get('hydration_and_electrolytes', {
+                "fluids": "30-40 ml/kg/day baseline, plus 500-1000 ml per hour of training",
+                "electrolytes": "Include 2-3 g sodium/day minimum; more if sweating heavily"
+            })
+            
+            # Create example daily macro build
+            example_daily_macro_build = nutrition_plan.get('example_daily_macro_build_adjust_by_body_mass', {
+                "for_80_kg_lifter": {
+                    "Protein": "160-176 g",
+                    "Carbs": "320-420 g (higher on training days)",
+                    "Fat": "60-80 g",
+                    "Calories": "≈ 2,900-3,400 (adjust based on goals)"
+                }
+            })
+            
+            # Return in EXACT format matching workout_plans.json
+            return {
+                "goal": goal,
+                "calories": calories,
+                "protein": protein,
+                "carbohydrate": carbohydrate,
+                "fat": fat,
+                "timing_and_training_day_setup": timing_and_training_day_setup,
+                "supplements": supplements,
+                "hydration_and_electrolytes": hydration_and_electrolytes,
+                "example_daily_macro_build_adjust_by_body_mass": example_daily_macro_build
+            }
+            
+        except Exception as e:
+            print(f"❌ Error creating nutrition section: {e}")
+            # Return default nutrition structure
+            return {
+                "goal": "Support overall health and fitness goals",
+                "calories": "Maintenance calories",
+                "protein": "1.6-2.2 g/kg/day",
+                "carbohydrate": "3-6 g/kg/day",
+                "fat": "0.6-1.0 g/kg/day",
+                "timing_and_training_day_setup": [
+                    "2-3 hours before exercise: Balanced meal with protein and carbohydrates",
+                    "30-60 minutes before exercise: Light snack with carbohydrates if needed",
+                    "Within 2 hours after exercise: Protein and carbohydrates for recovery",
+                    "Eat every 3-4 hours to maintain stable energy levels",
+                    "Include protein with each meal to support muscle maintenance"
+                ],
+                "supplements": [
+                    "Creatine monohydrate: 3-5 g daily, any time",
+                    "Whey or casein: to hit protein targets",
+                    "Vitamin D3: 1000-2000 IU/day if intake or sun is low",
+                    "Fish oil: target 1-2 g EPA+DHA/day if intake is low"
+                ],
+                "hydration_and_electrolytes": {
+                    "fluids": "30-40 ml/kg/day baseline, plus 500-1000 ml per hour of training",
+                    "electrolytes": "Include 2-3 g sodium/day minimum; more if sweating heavily"
+                },
+                "example_daily_macro_build_adjust_by_body_mass": {
+                    "for_80_kg_lifter": {
+                        "Protein": "160-176 g",
+                        "Carbs": "320-420 g (higher on training days)",
+                        "Fat": "60-80 g",
+                        "Calories": "≈ 2,900-3,400 (adjust based on goals)"
+                    }
+                }
+            }
