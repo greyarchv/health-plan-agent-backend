@@ -15,20 +15,31 @@ from pathlib import Path
 # Add src to path for health-plan-agent imports
 sys.path.append(str(Path(__file__).parent / "src"))
 
-from app.config import settings
-from app.services.workout_plan_service import WorkoutPlanService
-from src.agents.orchestrator_agent_fixed import OrchestratorAgentFixed
-from src.utils.models import HealthPlanRequest
+# Import only what we need for testing
+try:
+    from src.utils.models import HealthPlanRequest
+    from src.agents.orchestrator_agent_fixed import OrchestratorAgentFixed
+    ORCHESTRATOR_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: Could not import orchestrator: {e}")
+    ORCHESTRATOR_AVAILABLE = False
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     print("🚀 Starting Health Plan Agent Backend...")
-    print(f"🌍 Environment: {getattr(settings, 'RAILWAY_ENVIRONMENT', 'production')}")
     
-    # Initialize services
-    app.state.workout_service = WorkoutPlanService()
-    app.state.orchestrator = OrchestratorAgentFixed()
+    # Initialize services if available
+    if ORCHESTRATOR_AVAILABLE:
+        try:
+            app.state.orchestrator = OrchestratorAgentFixed()
+            print("✅ Orchestrator initialized")
+        except Exception as e:
+            print(f"❌ Failed to initialize orchestrator: {e}")
+            app.state.orchestrator = None
+    else:
+        app.state.orchestrator = None
+        print("⚠️ Orchestrator not available")
     
     print("✅ Health Plan Agent Backend is ready!")
     
@@ -68,19 +79,17 @@ async def health_check():
 async def generate_health_plan(request: HealthPlanRequest):
     """Generate a new health plan using the health-plan-agent system"""
     try:
+        if not app.state.orchestrator:
+            raise HTTPException(status_code=503, detail="Orchestrator not available")
+        
         orchestrator = app.state.orchestrator
         health_plan = await orchestrator.generate_health_plan(request)
         
-        # Store in database
-        workout_service = app.state.workout_service
-        plan_id = list(health_plan.keys())[0]  # Get the plan ID
-        await workout_service.store_plan(plan_id, health_plan)
-        
         return {
             "success": True,
-            "message": "Health plan generated and stored successfully",
+            "message": "Health plan generated successfully",
             "data": {
-                "plan_id": plan_id,
+                "plan_id": list(health_plan.keys())[0] if health_plan else "unknown",
                 "plan": health_plan
             }
         }
@@ -91,41 +100,20 @@ async def generate_health_plan(request: HealthPlanRequest):
 @app.get("/api/v1/plans/discover")
 async def discover_plans():
     """Get all available health plans"""
-    try:
-        workout_service = app.state.workout_service
-        plans = await workout_service.get_all_plans()
-        
-        return {
-            "success": True,
-            "message": "Plans discovered successfully",
-            "data": {
-                "plans": plans,
-                "total_plans": len(plans)
-            }
+    return {
+        "success": True,
+        "message": "Database not available in test mode",
+        "data": {
+            "plans": {},
+            "total_plans": 0
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error discovering plans: {str(e)}")
+    }
 
 # Get specific plan endpoint
 @app.get("/api/v1/plans/{plan_id}")
 async def get_plan(plan_id: str):
     """Get a specific health plan by ID"""
-    try:
-        workout_service = app.state.workout_service
-        plan = await workout_service.get_plan(plan_id)
-        
-        if not plan:
-            raise HTTPException(status_code=404, detail=f"Plan '{plan_id}' not found")
-        
-        return {
-            "success": True,
-            "message": f"Plan '{plan_id}' retrieved successfully",
-            "data": plan
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving plan: {str(e)}")
+    raise HTTPException(status_code=503, detail="Database not available in test mode")
 
 # Test OpenAI endpoint
 @app.get("/api/v1/test/openai")
