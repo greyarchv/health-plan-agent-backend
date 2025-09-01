@@ -128,8 +128,8 @@ class FitnessAgent(BaseAgent):
         
         return organized_exercises
     
-    async def _organize_by_days(self, exercises: Dict[str, List[Dict[str, Any]]], 
-                               goals: List[str]) -> Dict[str, List[Dict[str, Any]]]:
+    async def _organize_by_days(self, goals: List[str], constraints: List[str], 
+                               fitness_level: str) -> Dict[str, List[Dict[str, Any]]]:
         """Organize exercises into comprehensive training days with 30-60 minute workouts."""
         
         organized = {}
