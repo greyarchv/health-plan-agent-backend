@@ -1,0 +1,64 @@
+{
+  "overview": "The Postpartum Reconditioning health plan is designed specifically for new mothers aiming to restore their core strength and recover pelvic floor muscles. Our approach to fitness is gentle and progressive, starting with low-impact exercises suitable for beginners and gradually increasing in intensity over a 12-week period.",
+  "weekly_split": [
+    "Mon: Full Body A",
+    "Tue: Rest",
+    "Wed: Full Body B",
+    "Thu: Rest",
+    "Fri: Full Body C",
+    "Sat: Active Recovery",
+    "Sun: Rest"
+  ],
+  "global_rules": [
+    {
+      "title": "Safety First",
+      "text": "Begin exercise 6-8 weeks postpartum with medical clearance"
+    },
+    {
+      "title": "Core Safety",
+      "text": "Stop any exercise that causes doming or bulging in the abdominal area"
+    },
+    {
+      "title": "Progression",
+      "text": "Progress gradually and listen to your body"
+    }
+  ],
+  "days": {
+    "Full Body A": [
+      "1) Pelvic floor activation — 3×5-10 reps",
+      "2) Gentle walking — 10-30 minutes",
+      "3) Pelvic tilts — 3×10-15 reps",
+      "4) Deep breathing exercises — 3×5 breaths"
+    ],
+    "Full Body B": [
+      "1) Bird dog — 3×8-12 reps per side",
+      "2) Modified plank — 3×20-30 seconds",
+      "3) Gentle squats — 3×5-10 reps",
+      "4) Pelvic floor exercises — 3×10 reps"
+    ],
+    "Full Body C": [
+      "1) Dead bug — 3×10-15 reps",
+      "2) Modified push-ups — 3×3-8 reps",
+      "3) Walking lunges — 2×5-8 per leg",
+      "4) Core breathing — 3×5 breaths"
+    ]
+  },
+  "conditioning_and_recovery": [
+    "Focus on gentle movement and recovery",
+    "Include 10-15 minutes of daily mobility work",
+    "Prioritize sleep and stress management",
+    "Listen to your body and rest when needed"
+  ],
+  "nutrition": {
+    "goal": "Support recovery and healing with adequate protein and nutrients",
+    "calories": "2153 calories per day",
+    "protein": "112g protein per day",
+    "carbohydrate": "292g carbohydrates per day",
+    "fat": "60g fat per day",
+    "timing_and_training_day_setup": [
+      "2-3 hours before exercise: Balanced meal with protein and carbohydrates",
+      "Within 2 hours after exercise: Protein and carbohydrates for recovery",
+      "Eat every 3-4 hours to maintain stable energy levels"
+    ]
+  }
+}

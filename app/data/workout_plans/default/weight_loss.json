@@ -1,0 +1,128 @@
+{
+  "overview": "A 5-6 day plan to lose fat while preserving muscle using a small to moderate calorie deficit, heavy compounds, moderate volume, and strategic cardio. Each muscle is trained 2x weekly with most sets at 1-3 RIR.",
+  "weekly_split": [
+    "Mon: Upper A",
+    "Tue: Lower A",
+    "Wed: Conditioning A + Steps",
+    "Thu: Upper B",
+    "Fri: Lower B",
+    "Sat: Conditioning B + Mobility",
+    "Sun: Rest or Easy Steps"
+  ],
+  "global_rules": [
+    {
+      "title": "Effort",
+      "text": "Keep most sets at 1-3 reps in reserve to maintain performance in a deficit. Take isolation last sets to 0-1 RIR sparingly."
+    },
+    {
+      "title": "Rest",
+      "text": "2-3 min after compound sets, 60-90 s on isolation."
+    },
+    {
+      "title": "Progression",
+      "text": "Double progression within given rep ranges. When all sets hit the top of the range, increase load next session by the smallest increment."
+    },
+    {
+      "title": "Volume",
+      "text": "Aim 8-12 hard sets per muscle per week. If recovery lags, reduce sets by 2-4 for that area."
+    },
+    {
+      "title": "Conditioning",
+      "text": "Prioritize low-impact cardio that does not compromise lifting quality. Separate hard cardio and lifting by 6-24 h when possible."
+    },
+    {
+      "title": "NEAT",
+      "text": "Target 8k-12k steps per day to support the deficit without excessive fatigue."
+    },
+    {
+      "title": "Deload",
+      "text": "Every 5-6 weeks or when performance stalls, reduce sets by 30-50% and load by 10-15% for one week."
+    }
+  ],
+  "days": {
+    "Upper A": [
+      "1) Barbell bench press - 3x6-8",
+      "2) Chest-supported row - 3x8-10",
+      "3) Incline dumbbell press - 2x10-12",
+      "4) Lat pulldown or pull-ups - 2x8-12",
+      "5) Dumbbell lateral raise - 2-3x12-20",
+      "6) Barbell or cable curl - 2x10-15",
+      "7) Triceps pressdown - 2x10-15"
+    ],
+    "Lower A": [
+      "1) Back squat - 3x5-8",
+      "2) Romanian deadlift - 3x6-10",
+      "3) Leg press - 2x10-15",
+      "4) Seated or lying leg curl - 2x10-15",
+      "5) Standing calf raise - 3x10-15",
+      "6) Ab wheel or plank - 3 hard sets"
+    ],
+    "Conditioning A + Steps": [
+      "Intervals: Bike or run 6x1 min hard at RPE 8-9 with 2 min easy between",
+      "Easy steps: accumulate remaining daily steps to reach 8k-12k"
+    ],
+    "Upper B": [
+      "1) Incline barbell bench - 3x6-10",
+      "2) One-arm dumbbell row - 3x8-12",
+      "3) Machine or weighted dip - 2x8-12",
+      "4) Seated cable row - 2x10-12",
+      "5) Rear-delt raise - 2-3x15-20",
+      "6) Hammer curl - 2x10-12",
+      "7) Overhead cable triceps extension - 2x10-15"
+    ],
+    "Lower B": [
+      "1) Front squat or hack squat - 3x6-10",
+      "2) Hip thrust - 3x8-12",
+      "3) Bulgarian split squat - 2x8-12 per leg",
+      "4) Leg curl - 2x10-15",
+      "5) Seated calf raise - 3x12-20",
+      "6) Hanging leg raise - 3 hard sets"
+    ],
+    "Conditioning B + Mobility": [
+      "Steady state: 30-45 min easy at conversational pace",
+      "Mobility: 10-15 min hips, T-spine, shoulders"
+    ],
+    "Rest or Easy Steps": [
+      "Optional walk: 30-60 min easy",
+      "Light stretching and recovery work"
+    ]
+  },
+  "conditioning_and_recovery": [
+    "Keep most cardio easy. Use 1 hard interval session weekly.",
+    "Sleep 7-9 h. Manage stress. Track steps to stabilize energy expenditure."
+  ],
+  "nutrition": {
+    "goal": "Lose 0.5-1.0% bodyweight per week while preserving strength and lean mass.",
+    "calories": "Set a 10-25% deficit. Adjust by 100-200 kcal based on a 7-14 day rolling average of morning weight.",
+    "protein": "2.0-2.6 g/kg/day from high-quality sources, 3-5 feedings, 0.4-0.6 g/kg per meal.",
+    "carbohydrate": "2-4 g/kg/day. Skew carbs around training to support performance.",
+    "fat": "0.5-0.8 g/kg/day. Fill remaining calories after protein and carbs.",
+    "fiber": "At least 14 g per 1000 kcal with mostly minimally processed foods.",
+    "timing": [
+      "2-3 h pre-lift: 0.5-1.0 g/kg carbs + 0.3 g/kg protein.",
+      "Post-lift within 2 h: ~0.3 g/kg protein + carbs per appetite.",
+      "Pre-sleep: 30-40 g slow protein if daily protein is low at night."
+    ],
+    "diet_periodization": [
+      "Optional refeeds: 1-2 days per week at maintenance calories focused on carbs if training quality dips.",
+      "Optional diet break: 1-2 weeks at calculated maintenance after 8-12 weeks of dieting."
+    ],
+    "supplements": [
+      "Creatine monohydrate 3-5 g/day.",
+      "Caffeine 1-3 mg/kg 30-60 min pre-workout as tolerated.",
+      "Whey or casein to meet protein targets.",
+      "Fish oil targeting 1-2 g EPA+DHA/day if intake is low.",
+      "Vitamin D3 1000-2000 IU/day if sun or dietary intake is low."
+    ],
+    "hydration_and_electrolytes": {
+      "fluids": "30-40 ml/kg/day baseline plus 500-1000 ml per hour of training.",
+      "sodium": "2-3 g/day minimum. More if sweating heavily."
+    }
+  },
+  "execution_checklist": [
+    "Weigh daily after waking and average weekly.",
+    "Add or remove 100-200 kcal to keep loss at 0.5-1.0% per week.",
+    "Keep lifting performance as stable as possible. If performance drops for 2 weeks, reduce cardio or deficit slightly.",
+    "Maintain 8k-12k steps per day. Prioritize sleep."
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "overview": "A 6-day plan using a polarized 80-20 distribution with mostly easy aerobic work plus 1-2 hard sessions. Includes 2 short strength sessions to improve economy and injury resilience.",
+  "weekly_split": [
+    "Mon: Easy Zone 2",
+    "Tue: Intervals VO2",
+    "Wed: Easy + Strength",
+    "Thu: Threshold Tempo",
+    "Fri: Easy or Cross-Training",
+    "Sat: Long Zone 2",
+    "Sun: Rest"
+  ],
+  "global_rules": [
+    {
+      "title": "Intensity distribution",
+      "text": "Keep ~80% of sessions easy and ~20% hard. Easy means conversational pace. Hard sessions are intervals or threshold."
+    },
+    {
+      "title": "Progression",
+      "text": "Increase weekly duration by 5-10% on average. Every 3-4 weeks reduce volume by 20-40% for recovery."
+    },
+    {
+      "title": "Strength support",
+      "text": "Add 2x per week total-body strength for economy and injury prevention."
+    },
+    {
+      "title": "Recovery",
+      "text": "Sleep 7-9 h, fuel hard sessions, and separate strength and high-intensity on the same day when possible."
+    },
+    {
+      "title": "Monitoring",
+      "text": "Track RPE and heart rate zones. Back off when resting HR is elevated or RPE is unusually high."
+    }
+  ],
+  "days": {
+    "Easy Zone 2": [
+      "Endurance: 40-60 min at RPE 4-6 or HR Zone 2",
+      "Mobility: 10 min easy drills"
+    ],
+    "Intervals VO2": [
+      "Warm-up: 10-15 min easy with strides",
+      "Main set: 5-6x3 min hard at RPE 8-9 with 3 min easy between",
+      "Cool-down: 10 min easy"
+    ],
+    "Easy + Strength": [
+      "Endurance: 30-45 min easy at RPE 4-6",
+      "Strength: 30 min - squat or split squat 3x5-8, hip hinge 3x5-8, push 3x6-10, pull 3x6-10, calf or core 3 sets"
+    ],
+    "Threshold Tempo": [
+      "Warm-up: 10-15 min easy",
+      "Main set: 20-30 min at RPE 7-8 or lactate threshold pace",
+      "Cool-down: 10 min easy"
+    ],
+    "Easy or Cross-Training": [
+      "Option A: 30-50 min easy bike, swim, or run at RPE 4-6",
+      "Option B: Technique drills and mobility 20-30 min"
+    ],
+    "Long Zone 2": [
+      "Endurance: 60-120 min at RPE 4-6 - keep strictly aerobic",
+      "Fuel during if longer than 60-90 min"
+    ],
+    "Rest": [
+      "Full rest, light walking, mobility 10-15 min"
+    ]
+  },
+  "conditioning_and_recovery": [
+    "Keep easy days truly easy so hard days can be hard.",
+    "Use soft surfaces and rotate footwear or equipment to reduce injury risk."
+  ],
+  "nutrition": {
+    "goal": "Improve cardiovascular fitness by supporting hard sessions and recovery while maintaining or slightly increasing training volume.",
+    "calories": "Start around maintenance. Adjust to maintain stable bodyweight or a slight gain if increasing training load.",
+    "protein": "1.6-2.0 g/kg/day to support recovery.",
+    "carbohydrate": "5-8 g/kg/day. Match higher intake to interval, tempo, and long days.",
+    "fat": "0.8-1.0 g/kg/day or the remainder of calories.",
+    "fueling_guidelines": [
+      "Pre - 1-3 h before hard sessions: 1-2 g/kg carbs + 0.3 g/kg protein.",
+      "During - 30-60 g carbs per hour for 60-150 min sessions. Up to 90 g/h for 150+ min if gut trained.",
+      "Post - 1.0-1.2 g/kg carbs over 3-6 h plus ~0.3 g/kg protein."
+    ],
+    "supplements": [
+      "Caffeine 2-3 mg/kg 30-60 min pre-session.",
+      "Nitrate-rich foods or beetroot providing ~400-800 mg nitrate 2-3 h pre-high intensity.",
+      "Creatine 3-5 g/day if also doing strength work.",
+      "Electrolyte supplement as needed for long hot sessions."
+    ],
+    "hydration_and_electrolytes": {
+      "fluids": "400-800 ml per hour during sessions depending on heat and sweat rate.",
+      "sodium": "300-600 mg per hour during long or hot sessions. Increase if you are a salty or heavy sweater."
+    }
+  },
+  "execution_checklist": [
+    "Keep 80-20 intensity distribution. Do not race easy days.",
+    "Fuel hard days. Carry carbs and fluids for sessions longer than 60-90 min.",
+    "Add 5-10% volume most weeks and deload every 3-4 weeks.",
+    "Maintain 2 short strength sessions weekly for injury resistance and economy."
+  ]
+}

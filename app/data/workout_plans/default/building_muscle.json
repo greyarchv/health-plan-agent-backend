@@ -1,0 +1,130 @@
+{
+  "overview": "Here's a high-yield 6-day hypertrophy plan with evidence-based guardrails. It hits each muscle 2\u20133x weekly, targets ~12\u201320 hard sets per muscle per week, uses mostly compounds first, and builds in clear progression.",
+  "weekly_split": [
+    "Mon: Push A",
+    "Tue: Pull A",
+    "Wed: Legs A",
+    "Thu: Push B",
+    "Fri: Pull B",
+    "Sat: Legs B",
+    "Sun: Rest (light cardio + mobility)"
+  ],
+  "global_rules": [
+    {
+      "title": "Effort",
+      "text": "Stop most working sets with 0\u20132 reps in reserve (RIR). Take isolation accessories to 0\u20131 RIR on last set."
+    },
+    {
+      "title": "Rest",
+      "text": "2\u20133 min after compound sets; 60\u201390 s on isolation."
+    },
+    {
+      "title": "Tempo/ROM",
+      "text": "Controlled eccentrics, full pain-free ROM."
+    },
+    {
+      "title": "Progression",
+      "text": "Double progression. Use the given rep range. When you hit the top of the range for all sets with the same load, increase load next time by the smallest increment."
+    },
+    {
+      "title": "Volume tuning",
+      "text": "If lifts stall for 2 consecutive weeks and you're sleeping 7\u20139 h, add 1\u20132 sets for the lagging muscle. If performance or sleep drops, remove 2\u20134 weekly sets for that area."
+    },
+    {
+      "title": "Deload",
+      "text": "Every 5\u20136 weeks, reduce sets by ~30\u201350% and load by ~10\u201315% for one week."
+    }
+  ],
+  "days": {
+    "Push A": [
+      "1) Barbell bench press \u2014 4\u00d75\u20138",
+      "2) Incline DB press \u2014 3\u00d78\u201312",
+      "3) Standing barbell overhead press \u2014 3\u00d75\u20138",
+      "4) DB lateral raise \u2014 4\u00d712\u201320",
+      "5) Cable or machine chest fly \u2014 2\u00d712\u201315",
+      "6) Cable triceps press-down \u2014 3\u00d710\u201315"
+    ],
+    "Pull A": [
+      "1) Weighted pull-ups (or heavy lat pulldown) \u2014 4\u00d76\u201310",
+      "2) Chest-supported row \u2014 3\u00d78\u201312",
+      "3) Romanian deadlift \u2014 3\u00d76\u201310",
+      "4) Rear-delt cable fly \u2014 3\u00d712\u201320",
+      "5) Barbell curl \u2014 3\u00d78\u201312",
+      "6) Face pull \u2014 2\u00d715\u201320"
+    ],
+    "Legs A": [
+      "1) Back squat \u2014 4\u00d75\u20138",
+      "2) Leg press \u2014 3\u00d710\u201315",
+      "3) Seated or lying leg curl \u2014 3\u00d710\u201315",
+      "4) Walking DB lunge \u2014 2\u00d710\u201312/leg",
+      "5) Standing calf raise \u2014 4\u00d78\u201312",
+      "6) Ab wheel or plank \u2014 3 hard sets"
+    ],
+    "Push B": [
+      "1) Incline barbell bench \u2014 4\u00d76\u201310",
+      "2) DB shoulder press \u2014 3\u00d78\u201312",
+      "3) Machine or weighted dip \u2014 3\u00d78\u201312",
+      "4) DB lateral raise (slow eccentric) \u2014 4\u00d712\u201320",
+      "5) Overhead cable triceps extension \u2014 3\u00d710\u201315"
+    ],
+    "Pull B": [
+      "1) Barbell row (hips just above parallel) \u2014 4\u00d76\u201310",
+      "2) Neutral-grip pulldown \u2014 3\u00d78\u201312",
+      "3) Seated cable row \u2014 3\u00d710\u201312",
+      "4) Single-arm DB row \u2014 2\u00d78\u201312/side",
+      "5) Rear-delt raise \u2014 3\u00d715\u201320",
+      "6) Hammer curl \u2014 3\u00d710\u201312"
+    ],
+    "Legs B": [
+      "1) Front squat or hack squat \u2014 4\u00d76\u201310",
+      "2) Hip thrust \u2014 3\u00d78\u201312",
+      "3) Bulgarian split squat \u2014 3\u00d78\u201312/leg",
+      "4) Leg curl \u2014 3\u00d710\u201315",
+      "5) Seated calf raise \u2014 4\u00d712\u201320",
+      "6) Hanging leg raise \u2014 3 hard sets"
+    ]
+  },
+  "conditioning_and_recovery": [
+    "Optional low-intensity cardio: 2\u00d720\u201330 min easy pace on rest days or after lower-body days. Keep it easy to avoid interference.",
+    "Mobility: 10\u201315 min daily movement prep and post-session resets for hips, T-spine, shoulders.",
+    "Sleep: 7\u20139 h/night. Keep a consistent schedule."
+  ],
+  "nutrition": {
+    "goal": "gain ~0.25\u20130.5% of bodyweight per week. Adjust calories based on a 7\u201314 day rolling average of morning scale weight.",
+    "calories": "Start at maintenance +10\u201315%. If unknown, estimate maintenance at 32\u201336 kcal/kg/day for active lifters, then add 250\u2013450 kcal/day. Adjust by \u00b1150\u2013200 kcal as needed to keep the weekly gain target.",
+    "protein": "1.6\u20132.2 g/kg/day. Split across 3\u20135 feedings. Aim 0.3\u20130.5 g/kg per meal from high-quality sources.",
+    "carbohydrate": "3\u20136 g/kg/day. Skew toward training window to fuel volume and recovery.",
+    "fat": "0.6\u20131.0 g/kg/day (generally 20\u201335% of calories). Fill remaining calories after protein and carbs.",
+    "timing_and_training_day_setup": [
+      "2\u20133 h pre-workout: 0.5\u20131.0 g/kg carbs + 0.3 g/kg protein. Keep fats moderate.",
+      "30\u201360 min pre: Optional caffeine 1\u20133 mg/kg; add 1\u20132 g sodium in fluids if you sweat heavily.",
+      "Post-workout (within ~2 h): ~0.3 g/kg protein. Add 1\u20131.5 g/kg carbs across the next 3\u20136 h.",
+      "Pre-sleep: 30\u201340 g slow protein (e.g., casein or Greek yogurt) to support overnight MPS."
+    ],
+    "supplements": [
+      "Creatine monohydrate: 3\u20135 g daily, any time.",
+      "Whey or casein: to hit protein targets.",
+      "Vitamin D3: 1000\u20132000 IU/day if intake or sun is low.",
+      "Fish oil: target 1\u20132 g EPA+DHA/day via supplements or fatty fish.",
+      "Optional performance adds: 6\u20138 g citrulline malate ~30\u201345 min pre; beta-alanine 3.2\u20136.4 g/day if doing lots of intervals or high-rep work."
+    ],
+    "hydration_and_electrolytes": {
+      "fluids": "30\u201340 ml/kg/day baseline, plus 500\u20131000 ml per hour of training.",
+      "electrolytes": "Include 2\u20133 g sodium/day minimum; more if you sweat heavily."
+    },
+    "example_daily_macro_build_adjust_by_body_mass": {
+      "for_80_kg_lifter": {
+        "Protein": "160\u2013176 g",
+        "Carbs": "320\u2013420 g (higher on leg days)",
+        "Fat": "60\u201380 g",
+        "Calories": "\u2248 2,900\u20133,400 (adjust to hit weekly weight gain target)"
+      }
+    }
+  },
+  "execution_checklist": [
+    "Track loads, reps, and bodyweight. Aim to add 1\u20132 reps per exercise weekly or increase load when you hit the top of the range.",
+    "Keep most sets at 0\u20132 RIR; push isolation last sets to 0\u20131 RIR.",
+    "If joints feel beat up, swap barbell work for machine or DB variations while keeping volume and effort targets.",
+    "Reassess every 4\u20136 weeks. If a muscle lags, add 3\u20134 weekly sets for it and maintain for a block."
+  ]
+}

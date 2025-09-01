@@ -1,0 +1,114 @@
+{
+  "overview": "A 4-day strength-focused plan emphasizing specificity, heavy loading, long rests, and periodized intensity. Includes top singles for skill practice and back-off volume to build capacity.",
+  "weekly_split": [
+    "Mon: Squat Heavy + Bench Volume",
+    "Tue: Deadlift Heavy + Press",
+    "Wed: GPP or Rest",
+    "Thu: Squat Volume + Bench Heavy",
+    "Fri: Rest or Easy Cardio",
+    "Sat: Deadlift Volume + Bench Secondary + Upper Back",
+    "Sun: Rest"
+  ],
+  "global_rules": [
+    {
+      "title": "Specificity",
+      "text": "Prioritize the competition lifts and close variations. Use heavy loads frequently while keeping most work submaximal."
+    },
+    {
+      "title": "Effort and RPE",
+      "text": "Most back-off sets at RPE 6-9 with 1-3 RIR. Top singles around 85-92% 1RM if bar speed and technique are solid."
+    },
+    {
+      "title": "Rest",
+      "text": "3-5 min for heavy sets. 2-3 min for secondary lifts and accessories."
+    },
+    {
+      "title": "Progression",
+      "text": "Wave intensity and volume weekly. Add 2.5-5 kg when all back-off sets land at the top of the rep range with good speed."
+    },
+    {
+      "title": "Volume",
+      "text": "Aim 10-16 hard sets per main lift pattern per week across primary and secondary variations."
+    },
+    {
+      "title": "Deload",
+      "text": "Every 4-6 weeks reduce sets by 30-50% and load by 10-15% or use a pivot week with variations."
+    }
+  ],
+  "days": {
+    "Squat Heavy + Bench Volume": [
+      "1) Back squat - 1x1 at 85-90% then 4-6x3-5 at 75-82%",
+      "2) Competition bench press - 5-7x4-6 at 70-78%",
+      "3) Row variation - 3-4x6-10",
+      "4) Hamstring accessory (RDL or curl) - 3x6-10",
+      "5) Core bracing work - 3 hard sets"
+    ],
+    "Deadlift Heavy + Press": [
+      "1) Deadlift - 1x1 at 85-90% then 4-5x2-4 at 75-82%",
+      "2) Overhead press - 4-6x3-6 at 70-80%",
+      "3) Bench close-grip or paused - 3-4x4-6",
+      "4) Upper back pull (pulldown or pull-up) - 3x6-10",
+      "5) Hip hinge accessory - 2-3x6-10"
+    ],
+    "GPP or Rest": [
+      "Sled drags or carries 20-30 min easy",
+      "Mobility and soft tissue 10-15 min",
+      "Optional easy cardio 20-30 min at conversational pace"
+    ],
+    "Squat Volume + Bench Heavy": [
+      "1) Back squat or front squat - 5-7x3-5 at 70-80%",
+      "2) Competition bench press - 1x1 at 88-92% then 4-6x2-4 at 78-85%",
+      "3) Lunge or split squat - 3x6-10 per leg",
+      "4) Row or face pull - 3x10-15",
+      "5) Triceps accessory - 2-3x8-12"
+    ],
+    "Rest or Easy Cardio": [
+      "Walk or cycle 20-40 min easy",
+      "Light mobility and recovery work"
+    ],
+    "Deadlift Volume + Bench Secondary + Upper Back": [
+      "1) Deadlift variation (pause, tempo, or RDL) - 5-6x3-5 at 70-80%",
+      "2) Bench secondary (touch-and-go, 2-count pause) - 4-6x4-6 at 72-82%",
+      "3) Barbell or chest-supported row - 4x6-10",
+      "4) Pull-ups or pulldowns - 3x6-10",
+      "5) Posterior chain accessory - 2-3x8-12",
+      "6) Core anti-extension or anti-rotation - 3 hard sets"
+    ],
+    "Rest": [
+      "Full rest, light walking, mobility 10-15 min"
+    ]
+  },
+  "conditioning_and_recovery": [
+    "Limit hard cardio. Use 1-2 short easy sessions weekly for recovery and work capacity.",
+    "Prioritize sleep 7-9 h. Track estimated 1RM and bar speed if available."
+  ],
+  "nutrition": {
+    "goal": "Increase maximal strength with minimal fat gain by supporting heavy training and recovery.",
+    "calories": "Start at maintenance to +5-10% surplus. Adjust by 100-200 kcal based on weekly bodyweight and performance.",
+    "protein": "1.6-2.2 g/kg/day.",
+    "carbohydrate": "3-6 g/kg/day, higher on heavy lower-body and high-volume days.",
+    "fat": "0.6-1.0 g/kg/day or 20-35% of calories.",
+    "timing": [
+      "2-3 h pre-lift: 0.5-1.0 g/kg carbs + 0.3 g/kg protein.",
+      "During long sessions over 90 min: 20-40 g carbs per hour.",
+      "Post-lift: ~0.3 g/kg protein and carbs in the next 3-6 h."
+    ],
+    "supplements": [
+      "Creatine monohydrate 3-5 g/day.",
+      "Caffeine 2-3 mg/kg 30-60 min pre-lift as tolerated.",
+      "Whey or casein to meet protein.",
+      "Fish oil to reach 1-2 g EPA+DHA/day if intake is low.",
+      "Vitamin D3 1000-2000 IU/day if needed."
+    ],
+    "hydration_and_electrolytes": {
+      "fluids": "30-40 ml/kg/day plus 500-1000 ml per hour of training.",
+      "sodium": "2-3 g/day minimum. Add more if sessions are long and sweaty."
+    }
+  },
+  "execution_checklist": [
+    "Log top singles, back-off sets, and estimated 1RM to track progression.",
+    "Add load when all back-off sets are at the top of the range with good speed.",
+    "Keep accessories focused on weak links without compromising main lift recovery.",
+    "Deload or pivot every 4-6 weeks."
+  ]
+}
