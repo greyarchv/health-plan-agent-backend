@@ -1,1 +1,1 @@
-web: python railway_main_minimal.py 
+web: python railway_main_simple.py 
