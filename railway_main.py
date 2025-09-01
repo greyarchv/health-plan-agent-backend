@@ -93,11 +93,24 @@ async def health_check():
 async def generate_health_plan(request: HealthPlanRequest):
     """Generate a new health plan using the health-plan-agent system"""
     try:
+        print(f"🚀 Plan generation request received for {request.population}")
+        print(f"📋 Goals: {request.goals}")
+        print(f"⚠️ Constraints: {request.constraints}")
+        print(f"⏱️ Timeline: {request.timeline}")
+        print(f"💪 Fitness Level: {request.fitness_level}")
+        
         if not app.state.orchestrator:
+            print("❌ Orchestrator not available")
             raise HTTPException(status_code=503, detail="Orchestrator not available")
         
+        print("✅ Orchestrator available, starting plan generation...")
         orchestrator = app.state.orchestrator
+        
+        # Generate the health plan
+        print("🎼 Calling orchestrator.generate_health_plan...")
         health_plan = await orchestrator.generate_health_plan(request)
+        
+        print(f"✅ Plan generated successfully with keys: {list(health_plan.keys()) if health_plan else 'None'}")
         
         return {
             "success": True,
@@ -108,6 +121,9 @@ async def generate_health_plan(request: HealthPlanRequest):
             }
         }
     except Exception as e:
+        print(f"❌ Error in plan generation: {str(e)}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Error generating plan: {str(e)}")
 
 # Plan discovery endpoint
