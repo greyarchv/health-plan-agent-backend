@@ -17,11 +17,21 @@ sys.path.append(str(Path(__file__).parent / "src"))
 
 # Import only what we need for testing
 try:
+    print("🔍 Attempting to import HealthPlanRequest...")
     from src.utils.models import HealthPlanRequest
+    print("✅ HealthPlanRequest imported successfully")
+    
+    print("🔍 Attempting to import OrchestratorAgentFixed...")
     from src.agents.orchestrator_agent_fixed import OrchestratorAgentFixed
+    print("✅ OrchestratorAgentFixed imported successfully")
+    
     ORCHESTRATOR_AVAILABLE = True
+    print("✅ All imports successful")
 except ImportError as e:
-    print(f"Warning: Could not import orchestrator: {e}")
+    print(f"❌ Import error: {e}")
+    print(f"❌ Error type: {type(e)}")
+    import traceback
+    print(f"❌ Full traceback: {traceback.format_exc()}")
     ORCHESTRATOR_AVAILABLE = False
 
 @asynccontextmanager
@@ -32,10 +42,14 @@ async def lifespan(app: FastAPI):
     # Initialize services if available
     if ORCHESTRATOR_AVAILABLE:
         try:
+            print("🔍 Initializing OrchestratorAgentFixed...")
             app.state.orchestrator = OrchestratorAgentFixed()
-            print("✅ Orchestrator initialized")
+            print("✅ Orchestrator initialized successfully")
         except Exception as e:
             print(f"❌ Failed to initialize orchestrator: {e}")
+            print(f"❌ Error type: {type(e)}")
+            import traceback
+            print(f"❌ Full traceback: {traceback.format_exc()}")
             app.state.orchestrator = None
     else:
         app.state.orchestrator = None
