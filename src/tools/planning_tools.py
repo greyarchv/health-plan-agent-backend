@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Dict, Any
-from .base_tool import BaseTool
-from ..utils.config import Config
+from src.tools.base_tool import BaseTool
+from src.utils.config import Config
 import openai
 
 class ExerciseDatabaseTool(BaseTool):
