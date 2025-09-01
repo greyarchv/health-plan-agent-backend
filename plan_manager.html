@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Plan Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+        .plan { background: #f9f9f9; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Health Plan Manager</h1>
+    
+    <!-- Generate New Plan -->
+    <div class="section">
+        <h2>Generate New Plan</h2>
+        <form id="generateForm">
+            <label>Population:</label>
+            <input type="text" id="population" placeholder="e.g., postpartum_mothers, senior_fitness" required>
+            
+            <label>Goals (comma-separated):</label>
+            <input type="text" id="goals" placeholder="e.g., core_restoration, pelvic_floor_recovery" required>
+            
+            <label>Constraints (comma-separated):</label>
+            <input type="text" id="constraints" placeholder="e.g., diastasis_recti, arthritis">
+            
+            <label>Timeline:</label>
+            <select id="timeline">
+                <option value="8_weeks">8 weeks</option>
+                <option value="12_weeks" selected>12 weeks</option>
+                <option value="16_weeks">16 weeks</option>
+            </select>
+            
+            <label>Fitness Level:</label>
+            <select id="fitnessLevel">
+                <option value="beginner" selected>Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+            
+            <button type="submit">Generate Plan</button>
+        </form>
+        <div id="generateResult"></div>
+    </div>
+    
+    <!-- List Plans -->
+    <div class="section">
+        <h2>Available Plans</h2>
+        <button onclick="loadPlans()">Refresh Plans</button>
+        <div id="plansList"></div>
+    </div>
+    
+    <!-- Get Specific Plan -->
+    <div class="section">
+        <h2>Get Specific Plan</h2>
+        <input type="text" id="planId" placeholder="Enter plan ID">
+        <button onclick="getPlan()">Get Plan</button>
+        <div id="planResult"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://web-production-f15a06.up.railway.app';
+        
+        // Generate new plan
+        document.getElementById('generateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('generateResult');
+            resultDiv.innerHTML = 'Generating plan...';
+            
+            try {
+                const payload = {
+                    population: document.getElementById('population').value,
+                    goals: document.getElementById('goals').value.split(',').map(g => g.trim()),
+                    constraints: document.getElementById('constraints').value.split(',').map(c => c.trim()).filter(c => c),
+                    timeline: document.getElementById('timeline').value,
+                    fitness_level: document.getElementById('fitnessLevel').value
+                };
+                
+                const response = await fetch(`${API_BASE}/api/v1/plans/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ Plan generated: ${result.data.plan_id}</div>`;
+                    loadPlans(); // Refresh the plans list
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${result.message}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        });
+        
+        // Load all plans
+        async function loadPlans() {
+            const plansDiv = document.getElementById('plansList');
+            plansDiv.innerHTML = 'Loading plans...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/plans/discover`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const plans = result.data.plans;
+                    plansDiv.innerHTML = `
+                        <h3>Total Plans: ${result.data.total_plans}</h3>
+                        ${Object.keys(plans).map(planId => `
+                            <div class="plan">
+                                <strong>${planId}</strong>
+                                <p>${plans[planId].overview.substring(0, 200)}...</p>
+                                <button onclick="getPlanById('${planId}')">View Details</button>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    plansDiv.innerHTML = `<div class="error">❌ Error: ${result.message}</div>`;
+                }
+            } catch (error) {
+                plansDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Get specific plan
+        async function getPlan() {
+            const planId = document.getElementById('planId').value;
+            if (!planId) {
+                alert('Please enter a plan ID');
+                return;
+            }
+            await getPlanById(planId);
+        }
+        
+        async function getPlanById(planId) {
+            const resultDiv = document.getElementById('planResult');
+            resultDiv.innerHTML = 'Loading plan...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/plans/${planId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const plan = result.data;
+                    resultDiv.innerHTML = `
+                        <h3>Plan: ${planId}</h3>
+                        <div class="plan">
+                            <h4>Overview</h4>
+                            <p>${plan.overview}</p>
+                            
+                            <h4>Weekly Split</h4>
+                            <ul>${plan.weekly_split.map(day => `<li>${day}</li>`).join('')}</ul>
+                            
+                            <h4>Days</h4>
+                            ${Object.entries(plan.days).map(([day, exercises]) => `
+                                <h5>${day}</h5>
+                                <ul>${exercises.map(ex => `<li>${ex}</li>`).join('')}</ul>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${result.message}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Load plans on page load
+        loadPlans();
+    </script>
+</body>
+</html>

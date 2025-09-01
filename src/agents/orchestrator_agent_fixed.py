@@ -215,10 +215,10 @@ class OrchestratorAgentFixed(BaseAgent):
         """Create days structure in frontend-compatible format."""
         days = {}
         
-        # Check for exercises in the fitness plan (top level or nested)
-        exercises_data = fitness_plan.get("exercises", fitness_plan)
-        if exercises_data and isinstance(exercises_data, dict):
-            for day, exercises in exercises_data.items():
+        # The fitness agent returns organized days directly at the top level
+        # Look for the organized days structure
+        for day, exercises in fitness_plan.items():
+            if isinstance(exercises, list) and exercises:
                 formatted_exercises = []
                 for i, exercise in enumerate(exercises, 1):
                     if isinstance(exercise, dict):
@@ -237,20 +237,44 @@ class OrchestratorAgentFixed(BaseAgent):
                         formatted_exercises.append(f"{i}) {exercise}")
                 days[day] = formatted_exercises
         
-        # Also check for exercise_program (backward compatibility)
-        elif "exercise_program" in fitness_plan:
-            for day, exercises in fitness_plan["exercise_program"].items():
-                formatted_exercises = []
-                for i, exercise in enumerate(exercises, 1):
-                    if isinstance(exercise, dict):
-                        # Convert exercise dict to string format
-                        name = exercise.get("name", "Exercise")
-                        sets = exercise.get("sets", 3)
-                        reps = exercise.get("reps", "8-12")
-                        formatted_exercises.append(f"{i}) {name} — {sets}×{reps}")
-                    else:
-                        formatted_exercises.append(f"{i}) {exercise}")
-                days[day] = formatted_exercises
+        # If no days found, check for nested structures (backward compatibility)
+        if not days:
+            # Check for exercises in the fitness plan (top level or nested)
+            exercises_data = fitness_plan.get("exercises", fitness_plan)
+            if exercises_data and isinstance(exercises_data, dict):
+                for day, exercises in exercises_data.items():
+                    formatted_exercises = []
+                    for i, exercise in enumerate(exercises, 1):
+                        if isinstance(exercise, dict):
+                            # Convert exercise dict to string format
+                            name = exercise.get("name", "Exercise")
+                            sets = exercise.get("sets", 3)
+                            reps = exercise.get("reps", "8-12")
+                            notes = exercise.get("notes", "")
+                            
+                            # Format: "1) Exercise Name — Sets×Reps"
+                            exercise_text = f"{i}) {name} — {sets}×{reps}"
+                            if notes:
+                                exercise_text += f" ({notes})"
+                            formatted_exercises.append(exercise_text)
+                        else:
+                            formatted_exercises.append(f"{i}) {exercise}")
+                    days[day] = formatted_exercises
+            
+            # Also check for exercise_program (backward compatibility)
+            elif "exercise_program" in fitness_plan:
+                for day, exercises in fitness_plan["exercise_program"].items():
+                    formatted_exercises = []
+                    for i, exercise in enumerate(exercises, 1):
+                        if isinstance(exercise, dict):
+                            # Convert exercise dict to string format
+                            name = exercise.get("name", "Exercise")
+                            sets = exercise.get("sets", 3)
+                            reps = exercise.get("reps", "8-12")
+                            formatted_exercises.append(f"{i}) {name} — {sets}×{reps}")
+                        else:
+                            formatted_exercises.append(f"{i}) {exercise}")
+                    days[day] = formatted_exercises
         
         # Default structure if none exists
         if not days:
