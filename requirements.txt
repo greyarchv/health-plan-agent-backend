@@ -13,7 +13,6 @@ openai==1.58.1
 anthropic==0.34.0
 click==8.1.7
 rich==14.1.0
-asyncio==3.4.3
 
 # Database and Utilities
 supabase==2.8.0
