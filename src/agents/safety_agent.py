@@ -1,8 +1,8 @@
 import asyncio
 from typing import List, Dict, Any
-from .base_agent import BaseAgent
-from ..tools.validation_tools import ContraindicationCheckerTool, PlanValidatorTool
-from ..utils.config import Config
+from src.agents.base_agent import BaseAgent
+from src.tools.validation_tools import ContraindicationCheckerTool, PlanValidatorTool
+from src.utils.config import Config
 import openai
 
 class SafetyAgent(BaseAgent):

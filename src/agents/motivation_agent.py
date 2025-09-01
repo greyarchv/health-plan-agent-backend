@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Dict, Any
-from .base_agent import BaseAgent
-from ..utils.config import Config
+from src.agents.base_agent import BaseAgent
+from src.utils.config import Config
 import openai
 
 class MotivationAgent(BaseAgent):

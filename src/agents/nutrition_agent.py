@@ -1,8 +1,8 @@
 import asyncio
 from typing import List, Dict, Any
-from .base_agent import BaseAgent
-from ..tools.planning_tools import NutritionCalculatorTool
-from ..utils.config import Config
+from src.agents.base_agent import BaseAgent
+from src.tools.planning_tools import NutritionCalculatorTool
+from src.utils.config import Config
 import openai
 
 class NutritionAgent(BaseAgent):

@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Dict, Any
-from .base_agent import BaseAgent
-from ..utils.config import Config
+from src.agents.base_agent import BaseAgent
+from src.utils.config import Config
 import openai
 
 class OrchestratorAgentFixed(BaseAgent):
@@ -16,11 +16,11 @@ class OrchestratorAgentFixed(BaseAgent):
         self.client = openai.OpenAI(api_key=Config.OPENAI_API_KEY)
         
         # Initialize specialized agents
-        from .research_agent import ResearchAgent
-        from .fitness_agent import FitnessAgent
-        from .nutrition_agent import NutritionAgent
-        from .motivation_agent import MotivationAgent
-        from .safety_agent import SafetyAgent
+        from src.agents.research_agent import ResearchAgent
+        from src.agents.fitness_agent import FitnessAgent
+        from src.agents.nutrition_agent import NutritionAgent
+        from src.agents.motivation_agent import MotivationAgent
+        from src.agents.safety_agent import SafetyAgent
         
         self.research_agent = ResearchAgent()
         self.fitness_agent = FitnessAgent()
