@@ -215,34 +215,15 @@ class OrchestratorAgentFixed(BaseAgent):
         """Create days structure in frontend-compatible format."""
         days = {}
         
-        # The fitness agent returns organized days directly at the top level
-        # Look for the organized days structure
-        for day, exercises in fitness_plan.items():
-            if isinstance(exercises, list) and exercises:
-                formatted_exercises = []
-                for i, exercise in enumerate(exercises, 1):
-                    if isinstance(exercise, dict):
-                        # Convert exercise dict to string format
-                        name = exercise.get("name", "Exercise")
-                        sets = exercise.get("sets", 3)
-                        reps = exercise.get("reps", "8-12")
-                        notes = exercise.get("notes", "")
-                        
-                        # Format: "1) Exercise Name — Sets×Reps"
-                        exercise_text = f"{i}) {name} — {sets}×{reps}"
-                        if notes:
-                            exercise_text += f" ({notes})"
-                        formatted_exercises.append(exercise_text)
-                    else:
-                        formatted_exercises.append(f"{i}) {exercise}")
-                days[day] = formatted_exercises
+        # Debug: Print what we're receiving
+        print(f"DEBUG: Fitness plan keys: {list(fitness_plan.keys())}")
         
-        # If no days found, check for nested structures (backward compatibility)
-        if not days:
-            # Check for exercises in the fitness plan (top level or nested)
-            exercises_data = fitness_plan.get("exercises", fitness_plan)
-            if exercises_data and isinstance(exercises_data, dict):
-                for day, exercises in exercises_data.items():
+        # The fitness agent should return the organized days directly
+        # Check if we have the organized structure
+        if "Full Body A" in fitness_plan or "Foundation Phase" in fitness_plan or "Mobility & Balance" in fitness_plan:
+            # This is the organized structure from fitness agent
+            for day, exercises in fitness_plan.items():
+                if isinstance(exercises, list) and exercises:
                     formatted_exercises = []
                     for i, exercise in enumerate(exercises, 1):
                         if isinstance(exercise, dict):
@@ -260,33 +241,41 @@ class OrchestratorAgentFixed(BaseAgent):
                         else:
                             formatted_exercises.append(f"{i}) {exercise}")
                     days[day] = formatted_exercises
-            
-            # Also check for exercise_program (backward compatibility)
-            elif "exercise_program" in fitness_plan:
-                for day, exercises in fitness_plan["exercise_program"].items():
+        
+        # If no organized days found, check for nested structures
+        elif "exercises" in fitness_plan:
+            exercises_data = fitness_plan["exercises"]
+            if isinstance(exercises_data, dict):
+                for day, exercises in exercises_data.items():
                     formatted_exercises = []
                     for i, exercise in enumerate(exercises, 1):
                         if isinstance(exercise, dict):
-                            # Convert exercise dict to string format
                             name = exercise.get("name", "Exercise")
                             sets = exercise.get("sets", 3)
                             reps = exercise.get("reps", "8-12")
-                            formatted_exercises.append(f"{i}) {name} — {sets}×{reps}")
+                            notes = exercise.get("notes", "")
+                            
+                            exercise_text = f"{i}) {name} — {sets}×{reps}"
+                            if notes:
+                                exercise_text += f" ({notes})"
+                            formatted_exercises.append(exercise_text)
                         else:
                             formatted_exercises.append(f"{i}) {exercise}")
                     days[day] = formatted_exercises
         
-        # Default structure if none exists
+        # If still no days found, create default structure
         if not days:
+            print("DEBUG: No days found, creating default structure")
             days = {
                 "Full Body A": [
                     "1) Bodyweight squats — 3×10-15",
-                    "2) Push-ups — 3×5-10",
+                    "2) Push-ups — 3×5-10", 
                     "3) Walking lunges — 2×10/leg",
                     "4) Plank — 3×30 seconds"
                 ]
             }
         
+        print(f"DEBUG: Final days structure: {list(days.keys())}")
         return days
     
     async def _create_conditioning_recovery(self, fitness_plan: Dict[str, Any], safety_report: Dict[str, Any]) -> List[str]:

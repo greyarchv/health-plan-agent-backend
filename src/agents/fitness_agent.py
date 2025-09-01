@@ -24,32 +24,18 @@ class FitnessAgent(BaseAgent):
                      constraints: List[str], timeline: str, fitness_level: str) -> Dict[str, Any]:
         """Design fitness component based on research and requirements."""
         
-        fitness_plan = {
-            "weekly_split": [],
-            "exercises": {},
-            "progression": {},
-            "global_rules": [],
-            "safety_considerations": []
-        }
-        
-        # Design weekly split based on goals and timeline
-        weekly_split = await self._design_weekly_split(goals, timeline, fitness_level)
-        fitness_plan["weekly_split"] = weekly_split
-        
-        # Select exercises for each day
-        exercises = await self._select_exercises(goals, constraints, fitness_level)
-        fitness_plan["exercises"] = exercises
-        
-        # Design progression model
-        progression = await self._design_progression(goals, timeline, fitness_level)
-        fitness_plan["progression"] = progression
+        # Get the comprehensive 7-day organized structure
+        organized_days = await self._organize_by_days(goals, constraints, fitness_level)
         
         # Create global rules
         global_rules = await self._create_global_rules(research_findings, constraints)
-        fitness_plan["global_rules"] = global_rules
         
         # Add safety considerations
         safety_considerations = await self._add_safety_considerations(research_findings, constraints)
+        
+        # Return the organized structure directly
+        fitness_plan = organized_days
+        fitness_plan["global_rules"] = global_rules
         fitness_plan["safety_considerations"] = safety_considerations
         
         return fitness_plan
