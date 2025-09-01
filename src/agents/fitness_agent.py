@@ -132,10 +132,10 @@ class FitnessAgent(BaseAgent):
         prompt = self._create_evidence_based_prompt(research_findings, goals, constraints, timeline, fitness_level)
         
         try:
-                    print(f"🤖 Calling OpenAI with prompt length: {len(prompt)}")
-        print(f"🤖 OpenAI API Key configured: {'Yes' if self.client.api_key else 'No'}")
-        print(f"🤖 OpenAI API Key length: {len(self.client.api_key) if self.client.api_key else 0}")
-        print(f"🤖 OpenAI API Key preview: {self.client.api_key[:10] if self.client.api_key else 'None'}...")
+            print(f"🤖 Calling OpenAI with prompt length: {len(prompt)}")
+            print(f"🤖 OpenAI API Key configured: {'Yes' if self.client.api_key else 'No'}")
+            print(f"🤖 OpenAI API Key length: {len(self.client.api_key) if self.client.api_key else 0}")
+            print(f"🤖 OpenAI API Key preview: {self.client.api_key[:10] if self.client.api_key else 'None'}...")
             
             # Call OpenAI to generate the plan
             response = await asyncio.to_thread(
