@@ -133,14 +133,17 @@ async def test_openai():
     """Test OpenAI API connectivity."""
     try:
         import openai
-        from src.utils.config import Config
+        
+        # Get API key from environment
+        api_key = os.getenv("OPENAI_API_KEY", "")
+        model = os.getenv("OPENAI_MODEL", "gpt-4")
         
         print(f"🔍 Testing OpenAI API connection...")
-        print(f"🔑 API Key configured: {'Yes' if Config.OPENAI_API_KEY else 'No'}")
-        print(f"🔑 API Key length: {len(Config.OPENAI_API_KEY) if Config.OPENAI_API_KEY else 0}")
-        print(f"🔑 API Key preview: {Config.OPENAI_API_KEY[:10] if Config.OPENAI_API_KEY else 'None'}...")
+        print(f"🔑 API Key configured: {'Yes' if api_key else 'No'}")
+        print(f"🔑 API Key length: {len(api_key) if api_key else 0}")
+        print(f"🔑 API Key preview: {api_key[:10] if api_key else 'None'}...")
         
-        if not Config.OPENAI_API_KEY:
+        if not api_key:
             return {
                 "success": False,
                 "error": "No OpenAI API key configured",
@@ -151,14 +154,14 @@ async def test_openai():
             }
         
         # Initialize OpenAI client
-        client = openai.OpenAI(api_key=Config.OPENAI_API_KEY)
+        client = openai.OpenAI(api_key=api_key)
         
         # Make a simple test request
         print("📡 Making test request to OpenAI...")
         
         response = await asyncio.to_thread(
             client.chat.completions.create,
-            model=Config.OPENAI_MODEL,
+            model=model,
             messages=[{"role": "user", "content": "Give me a random word."}],
             max_tokens=10,
             temperature=0.7
@@ -176,8 +179,8 @@ async def test_openai():
                 "model_used": response.model,
                 "tokens_used": response.usage.total_tokens,
                 "api_key_configured": True,
-                "api_key_length": len(Config.OPENAI_API_KEY),
-                "api_key_preview": Config.OPENAI_API_KEY[:10] + "..."
+                "api_key_length": len(api_key),
+                "api_key_preview": api_key[:10] + "..."
             }
         }
         
@@ -192,8 +195,8 @@ async def test_openai():
             "error": f"OpenAI API call failed: {str(e)}",
             "error_type": str(type(e)),
             "details": {
-                "api_key_configured": bool(Config.OPENAI_API_KEY),
-                "api_key_length": len(Config.OPENAI_API_KEY) if Config.OPENAI_API_KEY else 0
+                "api_key_configured": bool(api_key),
+                "api_key_length": len(api_key) if api_key else 0
             }
         }
 
