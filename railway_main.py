@@ -196,6 +196,61 @@ async def get_plan(plan_id: str):
     """Get a specific health plan by ID"""
     raise HTTPException(status_code=503, detail="Database not available in test mode")
 
+# Test Supabase endpoint
+@app.get("/api/v1/test/supabase")
+async def test_supabase():
+    """Test Supabase connectivity and table structure."""
+    try:
+        if not app.state.integrated_planner:
+            return {
+                "success": False,
+                "error": "Integrated planner not available"
+            }
+        
+        integrated_planner = app.state.integrated_planner
+        
+        if not integrated_planner.supabase:
+            return {
+                "success": False,
+                "error": "Supabase not initialized"
+            }
+        
+        # Test basic connection
+        print("🔍 Testing Supabase connection...")
+        
+        # Try to query the workout_plans table
+        try:
+            result = integrated_planner.supabase.table("workout_plans").select("*").limit(1).execute()
+            print(f"✅ Supabase connection successful")
+            print(f"📊 Table query result: {len(result.data)} rows")
+            
+            return {
+                "success": True,
+                "message": "Supabase connection successful",
+                "data": {
+                    "table_exists": True,
+                    "sample_rows": len(result.data),
+                    "supabase_initialized": True
+                }
+            }
+        except Exception as table_error:
+            print(f"❌ Table query failed: {table_error}")
+            return {
+                "success": False,
+                "error": f"Table query failed: {str(table_error)}",
+                "data": {
+                    "supabase_initialized": True,
+                    "table_exists": False
+                }
+            }
+        
+    except Exception as e:
+        print(f"❌ Supabase test failed: {e}")
+        return {
+            "success": False,
+            "error": f"Supabase test failed: {str(e)}"
+        }
+
 # Test OpenAI endpoint
 @app.get("/api/v1/test/openai")
 async def test_openai():

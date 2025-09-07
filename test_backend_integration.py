@@ -16,8 +16,8 @@ def test_backend_integration():
     print("=" * 60)
     
     # Base URL - update this to your Railway deployment URL
-    base_url = "http://localhost:8000"  # For local testing
-    # base_url = "https://your-railway-app.railway.app"  # For Railway deployment
+    # base_url = "http://localhost:8000"  # For local testing
+    base_url = "https://web-production-f15a06.up.railway.app"  # For Railway deployment
     
     # Test 1: Health Check
     print("\n📋 Test 1: Health Check")
