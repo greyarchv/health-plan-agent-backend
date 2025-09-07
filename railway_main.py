@@ -246,6 +246,115 @@ async def test_supabase_storage():
         }
 
 # Test Supabase endpoint
+@app.post("/api/v1/migrate/existing-plans")
+async def migrate_existing_plans():
+    """Migrate existing workout plans from JSON to database."""
+    try:
+        if not app.state.integrated_planner:
+            return {
+                "success": False,
+                "error": "Integrated planner not available"
+            }
+        
+        integrated_planner = app.state.integrated_planner
+        
+        if not integrated_planner.supabase:
+            return {
+                "success": False,
+                "error": "Supabase not initialized"
+            }
+        
+        # Load existing plans from the JSON file
+        import json
+        from pathlib import Path
+        
+        json_file = Path("workout_plans.json")
+        
+        if not json_file.exists():
+            return {
+                "success": False,
+                "error": f"Workout plans JSON file not found at {json_file}"
+            }
+        
+        with open(json_file, 'r') as f:
+            existing_plans = json.load(f)
+        
+        print(f"📋 Found {len(existing_plans)} existing plans to migrate")
+        
+        # Migrate each plan
+        successful_migrations = 0
+        failed_migrations = 0
+        migration_results = []
+        
+        for plan_name, plan_data in existing_plans.items():
+            try:
+                # Generate a unique plan ID
+                from datetime import datetime
+                plan_id = f"migrated_{plan_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                
+                # Create the workout plan structure
+                workout_plan = {
+                    "plan_id": plan_id,
+                    "overview": plan_data.get("overview", ""),
+                    "weekly_split": plan_data.get("weekly_split", []),
+                    "global_rules": plan_data.get("global_rules", []),
+                    "days": plan_data.get("days", {}),
+                    "conditioning_and_recovery": plan_data.get("conditioning_and_recovery", []),
+                    "nutrition": plan_data.get("nutrition", {}),
+                    "execution_checklist": plan_data.get("execution_checklist", []),
+                    "generation_method": "Migrated_From_JSON",
+                    "user_id": "system_migration",
+                    "created_at": datetime.now().isoformat(),
+                    "status": "active"
+                }
+                
+                # Store in database
+                result = integrated_planner._store_plan_in_supabase(workout_plan)
+                
+                if result:
+                    successful_migrations += 1
+                    migration_results.append({
+                        "plan_name": plan_name,
+                        "plan_id": plan_id,
+                        "status": "success"
+                    })
+                    print(f"✅ Successfully migrated: {plan_name}")
+                else:
+                    failed_migrations += 1
+                    migration_results.append({
+                        "plan_name": plan_name,
+                        "status": "failed",
+                        "error": "Database insert failed"
+                    })
+                    print(f"❌ Failed to migrate: {plan_name}")
+                    
+            except Exception as e:
+                failed_migrations += 1
+                migration_results.append({
+                    "plan_name": plan_name,
+                    "status": "failed",
+                    "error": str(e)
+                })
+                print(f"❌ Error migrating {plan_name}: {e}")
+        
+        return {
+            "success": True,
+            "message": f"Migration completed: {successful_migrations} successful, {failed_migrations} failed",
+            "data": {
+                "total_plans": len(existing_plans),
+                "successful_migrations": successful_migrations,
+                "failed_migrations": failed_migrations,
+                "results": migration_results
+            }
+        }
+        
+    except Exception as e:
+        print(f"❌ Migration error: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @app.get("/api/v1/test/supabase")
 async def test_supabase():
     """Test Supabase connectivity and table structure."""
