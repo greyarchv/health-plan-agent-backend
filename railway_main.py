@@ -216,8 +216,9 @@ async def test_supabase_storage():
             }
         
         # Create a minimal test plan with only plan_id
+        import time
         test_plan = {
-            "plan_id": "test_plan_123"
+            "plan_id": f"test_plan_{int(time.time())}"
         }
         
         print("🔍 Testing Supabase storage with simple plan...")
