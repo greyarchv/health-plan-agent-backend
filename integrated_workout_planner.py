@@ -302,8 +302,22 @@ Output the complete workout plan in the exact JSON format specified above."""
             return []
         
         try:
-            result = self.supabase.table("workout_plans").select("*").eq("user_id", user_id).execute()
-            return result.data if result.data else []
+            # Get all plans and filter by user_id in metadata
+            result = self.supabase.table("workout_plans").select("*").execute()
+            
+            if result.data:
+                user_plans = []
+                for plan in result.data:
+                    if plan.get('metadata'):
+                        try:
+                            metadata = json.loads(plan['metadata'])
+                            if metadata.get('user_id') == user_id:
+                                user_plans.append(plan)
+                        except (json.JSONDecodeError, TypeError):
+                            continue
+                return user_plans
+            else:
+                return []
         except Exception as e:
             print(f"❌ Error fetching user plans: {e}")
             return []
