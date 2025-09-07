@@ -200,6 +200,8 @@ Output ONLY the JSON, no other text."""
         }
         
         # Only add optional fields if they exist in the workout plan
+        if "user_id" in workout_plan:
+            supabase_data["user_id"] = workout_plan.get("user_id")
         if "population" in workout_plan:
             supabase_data["population"] = workout_plan.get("population")
         if "goals" in workout_plan:
@@ -210,13 +212,20 @@ Output ONLY the JSON, no other text."""
             supabase_data["fitness_level"] = workout_plan.get("fitness_level")
         if "generation_method" in workout_plan:
             supabase_data["generation_method"] = workout_plan.get("generation_method")
+        if "overview" in workout_plan:
+            supabase_data["overview"] = workout_plan.get("overview")
+        if "status" in workout_plan:
+            supabase_data["status"] = workout_plan.get("status")
+        if "created_at" in workout_plan:
+            supabase_data["created_at"] = workout_plan.get("created_at")
         
         # Always include the full plan data
         supabase_data["plan_data"] = json.dumps(workout_plan)
         
         print(f"🔍 Supabase data prepared: {list(supabase_data.keys())}")
         print(f"🔍 Plan ID: {supabase_data['plan_id']}")
-        print(f"🔍 User ID: {supabase_data['user_id']}")
+        if 'user_id' in supabase_data:
+            print(f"🔍 User ID: {supabase_data['user_id']}")
         
         # Insert into Supabase
         print(f"🔍 Attempting Supabase insert...")
