@@ -287,12 +287,19 @@ async def test_supabase():
             print(f"✅ Supabase connection successful")
             print(f"📊 Table query result: {len(result.data)} rows")
             
+            # Get column names from the first row if it exists
+            columns = []
+            if result.data:
+                columns = list(result.data[0].keys())
+                print(f"📊 Available columns: {columns}")
+            
             return {
                 "success": True,
                 "message": "Supabase connection successful",
                 "data": {
                     "table_exists": True,
                     "sample_rows": len(result.data),
+                    "available_columns": columns,
                     "supabase_initialized": True
                 }
             }
