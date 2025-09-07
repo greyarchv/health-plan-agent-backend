@@ -194,38 +194,38 @@ Output ONLY the JSON, no other text."""
         if not self.supabase:
             raise ValueError("Supabase not initialized")
         
-        # Prepare the data for Supabase - only include fields that exist in the plan
+        # Prepare the data for Supabase - only use fields that exist in the table
+        # Based on our testing, the table has: id, plan_id, plan_data, metadata, created_at, updated_at, is_active
         supabase_data = {
-            "plan_id": workout_plan.get("plan_id")
+            "plan_id": workout_plan.get("plan_id"),
+            "plan_data": json.dumps(workout_plan),
+            "is_active": True
         }
         
-        # Only add optional fields if they exist in the workout plan
+        # Add metadata with user info if available
+        metadata = {}
         if "user_id" in workout_plan:
-            supabase_data["user_id"] = workout_plan.get("user_id")
+            metadata["user_id"] = workout_plan.get("user_id")
         if "population" in workout_plan:
-            supabase_data["population"] = workout_plan.get("population")
+            metadata["population"] = workout_plan.get("population")
         if "goals" in workout_plan:
-            supabase_data["goals"] = json.dumps(workout_plan.get("goals", []))
+            metadata["goals"] = workout_plan.get("goals", [])
         if "timeline" in workout_plan:
-            supabase_data["timeline"] = workout_plan.get("timeline")
+            metadata["timeline"] = workout_plan.get("timeline")
         if "fitness_level" in workout_plan:
-            supabase_data["fitness_level"] = workout_plan.get("fitness_level")
+            metadata["fitness_level"] = workout_plan.get("fitness_level")
         if "generation_method" in workout_plan:
-            supabase_data["generation_method"] = workout_plan.get("generation_method")
-        if "overview" in workout_plan:
-            supabase_data["overview"] = workout_plan.get("overview")
-        if "status" in workout_plan:
-            supabase_data["status"] = workout_plan.get("status")
-        if "created_at" in workout_plan:
-            supabase_data["created_at"] = workout_plan.get("created_at")
+            metadata["generation_method"] = workout_plan.get("generation_method")
         
-        # Always include the full plan data
-        supabase_data["plan_data"] = json.dumps(workout_plan)
+        if metadata:
+            supabase_data["metadata"] = json.dumps(metadata)
         
         print(f"🔍 Supabase data prepared: {list(supabase_data.keys())}")
         print(f"🔍 Plan ID: {supabase_data['plan_id']}")
-        if 'user_id' in supabase_data:
-            print(f"🔍 User ID: {supabase_data['user_id']}")
+        if 'metadata' in supabase_data:
+            metadata_obj = json.loads(supabase_data['metadata'])
+            if 'user_id' in metadata_obj:
+                print(f"🔍 User ID: {metadata_obj['user_id']}")
         
         # Insert into Supabase
         print(f"🔍 Attempting Supabase insert...")
