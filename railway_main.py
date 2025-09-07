@@ -205,6 +205,7 @@ async def get_system_plans():
                 "success": True,
                 "message": f"Retrieved {len(system_plans)} system plans",
                 "data": {
+                    "user_id": "system_plans",
                     "plans": system_plans,
                     "total_plans": len(system_plans)
                 }
@@ -214,6 +215,7 @@ async def get_system_plans():
                 "success": True,
                 "message": "No system plans found",
                 "data": {
+                    "user_id": "system_plans",
                     "plans": [],
                     "total_plans": 0
                 }
