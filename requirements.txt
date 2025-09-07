@@ -9,13 +9,13 @@ pydantic==2.8.2
 pydantic-settings==2.2.1
 
 # Health Plan Agent Dependencies
-openai==1.58.1
-anthropic==0.34.0
+openai>=1.0.0
+anthropic>=0.7.0
 click==8.1.7
 rich==14.1.0
 
 # Database and Utilities
-supabase==2.8.0
+supabase>=2.0.0
 httpx==0.27.0
 python-multipart==0.0.9
 

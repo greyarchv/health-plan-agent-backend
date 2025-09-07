@@ -12,27 +12,24 @@ import sys
 import asyncio
 from pathlib import Path
 
-# Add src to path for health-plan-agent imports
-sys.path.append(str(Path(__file__).parent / "src"))
-
-# Import only what we need for testing
+# Import the new simplified workout planners
 try:
-    print("🔍 Attempting to import HealthPlanRequest...")
-    from src.utils.models import HealthPlanRequest
-    print("✅ HealthPlanRequest imported successfully")
+    print("🔍 Attempting to import IntegratedWorkoutPlanner...")
+    from integrated_workout_planner import IntegratedWorkoutPlanner
+    print("✅ IntegratedWorkoutPlanner imported successfully")
     
-    print("🔍 Attempting to import OrchestratorAgentFixed...")
-    from src.agents.orchestrator_agent_fixed import OrchestratorAgentFixed
-    print("✅ OrchestratorAgentFixed imported successfully")
+    print("🔍 Attempting to import SimpleWorkoutPlanner...")
+    from simple_workout_planner import SimpleWorkoutPlanner
+    print("✅ SimpleWorkoutPlanner imported successfully")
     
-    ORCHESTRATOR_AVAILABLE = True
-    print("✅ All imports successful")
+    PLANNERS_AVAILABLE = True
+    print("✅ All new planners imported successfully")
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print(f"❌ Error type: {type(e)}")
     import traceback
     print(f"❌ Full traceback: {traceback.format_exc()}")
-    ORCHESTRATOR_AVAILABLE = False
+    PLANNERS_AVAILABLE = False
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,20 +37,26 @@ async def lifespan(app: FastAPI):
     print("🚀 Starting Health Plan Agent Backend...")
     
     # Initialize services if available
-    if ORCHESTRATOR_AVAILABLE:
+    if PLANNERS_AVAILABLE:
         try:
-            print("🔍 Initializing OrchestratorAgentFixed...")
-            app.state.orchestrator = OrchestratorAgentFixed()
-            print("✅ Orchestrator initialized successfully")
+            print("🔍 Initializing IntegratedWorkoutPlanner...")
+            app.state.integrated_planner = IntegratedWorkoutPlanner()
+            print("✅ Integrated planner initialized successfully")
+            
+            print("🔍 Initializing SimpleWorkoutPlanner...")
+            app.state.simple_planner = SimpleWorkoutPlanner()
+            print("✅ Simple planner initialized successfully")
         except Exception as e:
-            print(f"❌ Failed to initialize orchestrator: {e}")
+            print(f"❌ Failed to initialize planners: {e}")
             print(f"❌ Error type: {type(e)}")
             import traceback
             print(f"❌ Full traceback: {traceback.format_exc()}")
-            app.state.orchestrator = None
+            app.state.integrated_planner = None
+            app.state.simple_planner = None
     else:
-        app.state.orchestrator = None
-        print("⚠️ Orchestrator not available")
+        app.state.integrated_planner = None
+        app.state.simple_planner = None
+        print("⚠️ Planners not available")
     
     print("✅ Health Plan Agent Backend is ready!")
     
@@ -91,87 +94,58 @@ async def health_check():
 # Plan generation endpoint
 @app.post("/api/v1/plans/generate")
 async def generate_health_plan(request: dict):
-    """Generate a new health plan using the health-plan-agent system"""
+    """Generate a new health plan using the new integrated workout planner"""
     try:
         print(f"🚀 Plan generation request received")
         print(f"📝 Request data: {request}")
         
-        # Check if this is a prompt-based request
-        if "prompt" in request:
-            print(f"🎯 Natural language prompt received: {request['prompt'][:100]}...")
-            
-            if not app.state.orchestrator:
-                print("❌ Orchestrator not available")
-                raise HTTPException(status_code=503, detail="Orchestrator not available")
-            
-            print("✅ Orchestrator available, starting prompt-based plan generation...")
-            orchestrator = app.state.orchestrator
-            
-            # Create a simplified request object from the prompt
-            # The orchestrator will use AI to extract the necessary parameters
-            simplified_request = type('Request', (), {
-                'population': 'extracted_from_prompt',
-                'goals': ['extracted_from_prompt'],
-                'constraints': ['extracted_from_prompt'],
-                'timeline': 'extracted_from_prompt',
-                'fitness_level': 'extracted_from_prompt',
-                'preferences': [],
-                'prompt': request['prompt']
-            })()
-            
-            # Generate the health plan using the prompt
-            print("🎼 Calling orchestrator.generate_health_plan with prompt...")
-            health_plan = await orchestrator.generate_health_plan(simplified_request)
-            
-            print(f"✅ Plan generated successfully with keys: {list(health_plan.keys()) if health_plan else 'None'}")
-            
-            return {
-                "success": True,
-                "message": "Health plan generated successfully from prompt",
-                "data": {
-                    "plan_id": list(health_plan.keys())[0] if health_plan else "unknown",
-                    "plan": health_plan
-                }
+        # Check if planners are available
+        if not app.state.integrated_planner:
+            print("❌ Integrated planner not available")
+            raise HTTPException(status_code=503, detail="Integrated planner not available")
+        
+        # Extract user_id from request (for database storage)
+        user_id = request.get('user_id', 'anonymous_user')
+        
+        # Prepare the request for the new planner
+        planner_request = {
+            'population': request.get('population', 'general'),
+            'goals': request.get('goals', []),
+            'constraints': request.get('constraints', []),
+            'timeline': request.get('timeline', '12_weeks'),
+            'fitness_level': request.get('fitness_level', 'intermediate'),
+            'preferences': request.get('preferences', [])
+        }
+        
+        print(f"📋 Structured request for {planner_request['population']}")
+        print(f"📋 Goals: {planner_request['goals']}")
+        print(f"📋 Timeline: {planner_request['timeline']}")
+        print(f"📋 Fitness Level: {planner_request['fitness_level']}")
+        
+        # Generate the workout plan using the integrated planner
+        print("🎯 Generating workout plan with integrated planner...")
+        integrated_planner = app.state.integrated_planner
+        
+        # Use the integrated planner to generate and store the plan
+        workout_plan = integrated_planner.generate_and_store_workout_plan(
+            planner_request, 
+            user_id=user_id
+        )
+        
+        print(f"✅ Plan generated successfully!")
+        print(f"📊 Plan ID: {workout_plan.get('plan_id')}")
+        print(f"📊 Database ID: {workout_plan.get('database_id', 'Not stored in DB')}")
+        
+        return {
+            "success": True,
+            "message": "Workout plan generated and stored successfully",
+            "data": {
+                "plan_id": workout_plan.get('plan_id'),
+                "database_id": workout_plan.get('database_id'),
+                "user_id": user_id,
+                "plan": workout_plan
             }
-        else:
-            # Handle the old structured request format for backward compatibility
-            print(f"📋 Structured request received for {request.get('population', 'unknown')}")
-            print(f"📋 Goals: {request.get('goals', [])}")
-            print(f"⚠️ Constraints: {request.get('constraints', [])}")
-            print(f"⏱️ Timeline: {request.get('timeline', 'unknown')}")
-            print(f"💪 Fitness Level: {request.get('fitness_level', 'unknown')}")
-            
-            if not app.state.orchestrator:
-                print("❌ Orchestrator not available")
-                raise HTTPException(status_code=503, detail="Orchestrator not available")
-            
-            print("✅ Orchestrator available, starting structured plan generation...")
-            orchestrator = app.state.orchestrator
-            
-            # Convert dict to proper request object
-            structured_request = type('Request', (), {
-                'population': request.get('population', 'general'),
-                'goals': request.get('goals', []),
-                'constraints': request.get('constraints', []),
-                'timeline': request.get('timeline', '12_weeks'),
-                'fitness_level': request.get('fitness_level', 'beginner'),
-                'preferences': request.get('preferences', [])
-            })()
-            
-            # Generate the health plan
-            print("🎼 Calling orchestrator.generate_health_plan...")
-            health_plan = await orchestrator.generate_health_plan(structured_request)
-            
-            print(f"✅ Plan generated successfully with keys: {list(health_plan.keys()) if health_plan else 'None'}")
-            
-            return {
-                "success": True,
-                "message": "Health plan generated successfully",
-                "data": {
-                    "plan_id": list(health_plan.keys())[0] if health_plan else "unknown",
-                    "plan": health_plan
-                }
-            }
+        }
             
     except Exception as e:
         print(f"❌ Error in plan generation: {str(e)}")
@@ -191,6 +165,30 @@ async def discover_plans():
             "total_plans": 0
         }
     }
+
+# Get user plans endpoint
+@app.get("/api/v1/plans/user/{user_id}")
+async def get_user_plans(user_id: str):
+    """Get all workout plans for a specific user"""
+    try:
+        if not app.state.integrated_planner:
+            raise HTTPException(status_code=503, detail="Integrated planner not available")
+        
+        integrated_planner = app.state.integrated_planner
+        user_plans = integrated_planner.get_user_plans(user_id)
+        
+        return {
+            "success": True,
+            "message": f"Retrieved {len(user_plans)} plans for user {user_id}",
+            "data": {
+                "user_id": user_id,
+                "plans": user_plans,
+                "total_plans": len(user_plans)
+            }
+        }
+    except Exception as e:
+        print(f"❌ Error retrieving user plans: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving user plans: {str(e)}")
 
 # Get specific plan endpoint
 @app.get("/api/v1/plans/{plan_id}")
@@ -281,6 +279,7 @@ async def root():
         "endpoints": {
             "health": "/health",
             "generate_plan": "/api/v1/plans/generate",
+            "get_user_plans": "/api/v1/plans/user/{user_id}",
             "discover_plans": "/api/v1/plans/discover",
             "get_plan": "/api/v1/plans/{plan_id}",
             "test_openai": "/api/v1/test/openai"
