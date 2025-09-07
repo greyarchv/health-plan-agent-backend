@@ -167,6 +167,64 @@ async def discover_plans():
     }
 
 # Get user plans endpoint
+@app.get("/api/v1/plans/system")
+async def get_system_plans():
+    """Get all system/migrated workout plans available to all users."""
+    try:
+        if not app.state.integrated_planner:
+            return {
+                "success": False,
+                "error": "Integrated planner not available"
+            }
+        
+        integrated_planner = app.state.integrated_planner
+        
+        if not integrated_planner.supabase:
+            return {
+                "success": False,
+                "error": "Supabase not initialized"
+            }
+        
+        # Get all plans that start with "migrated_" (our system plans)
+        result = integrated_planner.supabase.table("workout_plans").select("*").execute()
+        
+        if result.data:
+            system_plans = []
+            for plan in result.data:
+                if plan.get('metadata'):
+                    try:
+                        metadata = json.loads(plan['metadata'])
+                        user_id = metadata.get('user_id', '')
+                        if user_id.startswith('migrated_'):
+                            system_plans.append(plan)
+                    except (json.JSONDecodeError, TypeError):
+                        continue
+            
+            return {
+                "success": True,
+                "message": f"Retrieved {len(system_plans)} system plans",
+                "data": {
+                    "plans": system_plans,
+                    "total_plans": len(system_plans)
+                }
+            }
+        else:
+            return {
+                "success": True,
+                "message": "No system plans found",
+                "data": {
+                    "plans": [],
+                    "total_plans": 0
+                }
+            }
+        
+    except Exception as e:
+        print(f"❌ Error fetching system plans: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @app.get("/api/v1/plans/user/{user_id}")
 async def get_user_plans(user_id: str):
     """Get all workout plans for a specific user"""
