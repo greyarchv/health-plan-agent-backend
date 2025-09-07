@@ -215,24 +215,13 @@ async def test_supabase_storage():
                 "error": "Supabase not initialized"
             }
         
-        # Create a simple test plan
+        # Create a minimal test plan with only basic fields
         test_plan = {
             "plan_id": "test_plan_123",
             "user_id": "test_user_123",
-            "population": "muscle_building",
-            "goals": ["hypertrophy"],
-            "timeline": "12_weeks",
-            "fitness_level": "intermediate",
             "overview": "Test plan",
-            "weekly_split": ["Mon: Test"],
-            "global_rules": [{"title": "Test", "text": "Test rule"}],
-            "days": {"Test Day": ["Test exercise"]},
-            "conditioning_and_recovery": ["Test recovery"],
-            "nutrition": {"goal": "Test nutrition"},
-            "execution_checklist": ["Test checklist"],
             "status": "active",
-            "created_at": "2025-09-07T14:44:02.853157",
-            "generation_method": "Test"
+            "created_at": "2025-09-07T14:44:02.853157"
         }
         
         print("🔍 Testing Supabase storage with simple plan...")
