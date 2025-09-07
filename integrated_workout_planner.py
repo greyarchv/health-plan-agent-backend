@@ -57,11 +57,18 @@ class IntegratedWorkoutPlanner:
         # Store in Supabase if available
         if self.supabase:
             try:
+                print(f"🔍 Attempting to store plan in Supabase...")
+                print(f"🔍 Plan ID: {workout_plan.get('plan_id')}")
+                print(f"🔍 User ID: {workout_plan.get('user_id')}")
+                
                 result = self._store_plan_in_supabase(workout_plan)
                 workout_plan["database_id"] = result.get("id")
                 print(f"✅ Plan stored in Supabase with ID: {result.get('id')}")
             except Exception as e:
                 print(f"⚠️ Failed to store in Supabase: {e}")
+                print(f"⚠️ Error type: {type(e)}")
+                import traceback
+                print(f"⚠️ Full traceback: {traceback.format_exc()}")
                 print("💾 Plan will be saved locally only")
         
         # Always save locally as backup
@@ -201,12 +208,22 @@ Output ONLY the JSON, no other text."""
             "generation_method": workout_plan.get("generation_method")
         }
         
+        print(f"🔍 Supabase data prepared: {list(supabase_data.keys())}")
+        print(f"🔍 Plan ID: {supabase_data['plan_id']}")
+        print(f"🔍 User ID: {supabase_data['user_id']}")
+        
         # Insert into Supabase
+        print(f"🔍 Attempting Supabase insert...")
         result = self.supabase.table("workout_plans").insert(supabase_data).execute()
         
+        print(f"🔍 Supabase result: {result}")
+        print(f"🔍 Result data: {result.data}")
+        
         if result.data:
+            print(f"✅ Supabase insert successful!")
             return result.data[0]
         else:
+            print(f"❌ Supabase insert failed - no data returned")
             raise ValueError("Failed to insert into Supabase")
     
     def _save_plan_locally(self, workout_plan: dict):
