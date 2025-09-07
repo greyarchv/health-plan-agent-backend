@@ -215,13 +215,10 @@ async def test_supabase_storage():
                 "error": "Supabase not initialized"
             }
         
-        # Create a minimal test plan with only basic fields
+        # Create a minimal test plan with only the most basic fields
         test_plan = {
             "plan_id": "test_plan_123",
-            "user_id": "test_user_123",
-            "overview": "Test plan",
-            "status": "active",
-            "created_at": "2025-09-07T14:44:02.853157"
+            "user_id": "test_user_123"
         }
         
         print("🔍 Testing Supabase storage with simple plan...")

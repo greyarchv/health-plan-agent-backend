@@ -197,10 +197,7 @@ Output ONLY the JSON, no other text."""
         # Prepare the data for Supabase - only include fields that exist in the plan
         supabase_data = {
             "plan_id": workout_plan.get("plan_id"),
-            "user_id": workout_plan.get("user_id"),
-            "overview": workout_plan.get("overview"),
-            "status": workout_plan.get("status", "active"),
-            "created_at": workout_plan.get("created_at")
+            "user_id": workout_plan.get("user_id")
         }
         
         # Only add optional fields if they exist in the workout plan
