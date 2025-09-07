@@ -196,6 +196,69 @@ async def get_plan(plan_id: str):
     """Get a specific health plan by ID"""
     raise HTTPException(status_code=503, detail="Database not available in test mode")
 
+# Test Supabase storage endpoint
+@app.post("/api/v1/test/supabase-storage")
+async def test_supabase_storage():
+    """Test Supabase storage with a simple workout plan."""
+    try:
+        if not app.state.integrated_planner:
+            return {
+                "success": False,
+                "error": "Integrated planner not available"
+            }
+        
+        integrated_planner = app.state.integrated_planner
+        
+        if not integrated_planner.supabase:
+            return {
+                "success": False,
+                "error": "Supabase not initialized"
+            }
+        
+        # Create a simple test plan
+        test_plan = {
+            "plan_id": "test_plan_123",
+            "user_id": "test_user_123",
+            "population": "muscle_building",
+            "goals": ["hypertrophy"],
+            "timeline": "12_weeks",
+            "fitness_level": "intermediate",
+            "overview": "Test plan",
+            "weekly_split": ["Mon: Test"],
+            "global_rules": [{"title": "Test", "text": "Test rule"}],
+            "days": {"Test Day": ["Test exercise"]},
+            "conditioning_and_recovery": ["Test recovery"],
+            "nutrition": {"goal": "Test nutrition"},
+            "execution_checklist": ["Test checklist"],
+            "status": "active",
+            "created_at": "2025-09-07T14:44:02.853157",
+            "generation_method": "Test"
+        }
+        
+        print("🔍 Testing Supabase storage with simple plan...")
+        
+        # Try to store the test plan
+        result = integrated_planner._store_plan_in_supabase(test_plan)
+        
+        return {
+            "success": True,
+            "message": "Test plan stored successfully",
+            "data": {
+                "result": result,
+                "plan_id": test_plan["plan_id"]
+            }
+        }
+        
+    except Exception as e:
+        print(f"❌ Supabase storage test failed: {e}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
+        return {
+            "success": False,
+            "error": f"Supabase storage test failed: {str(e)}",
+            "traceback": traceback.format_exc()
+        }
+
 # Test Supabase endpoint
 @app.get("/api/v1/test/supabase")
 async def test_supabase():
