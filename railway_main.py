@@ -186,6 +186,7 @@ async def get_system_plans():
             }
         
         # Get all plans that start with "migrated_" (our system plans)
+        import json
         result = integrated_planner.supabase.table("workout_plans").select("*").execute()
         
         if result.data:
